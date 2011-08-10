@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load commit_tags %}
+
+{% block content %}
+{% get_recent_commits 10 as commits %}
+{% include "commitlog/_commitlog.html" %}
+{% endblock %}
