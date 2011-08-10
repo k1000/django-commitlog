@@ -1,0 +1,18 @@
+{% load commit_tags %}
+{% get_recent_commits 10 as commits %}
+<ul>
+{% for commit in commits %}
+    <li>
+    	{{ commit.hexsha|truncatechars:6 }} {{ commit.author }} 
+    	- {{ commit.committed_date|mkdate }} - {{ commit.message }}
+
+    	<ul>
+    		{% for file, values in commit.stats.files.items %}
+    		<li>
+    			{{ file }} (+{{ values.insertions}}, -{{ values.deletions}})
+    		</li>
+    		{% endfor %}
+    	</ul>
+    </li>
+{% endfor %}
+</ul>
