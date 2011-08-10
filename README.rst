@@ -10,7 +10,7 @@ Installation
 
 1. Requires GitPython http://packages.python.org/GitPython/0.3.2/index.html::
         
-        pip  install GitPython
+        pip  install GitPython django-paging
 
 2. Download and install::
 
