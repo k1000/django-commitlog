@@ -1,19 +1,7 @@
 About
 -----
 
-*django-tracker* - simple bug tracker loosely coupled with your django project.
-
-Features:
-    * bug/feature submission and tracking
-    * task assignment
-    * integration with django.users
-    * email notification when bug/feature changes
-    * convinient configuration via settings
-
-Optional Features (activated via settings):
-    * coupling to project apps
-    * multisite support
-
+*django-commitlog* - view GIT commit log.
 Known to work in Django 1.3
 
 Installation
@@ -21,39 +9,26 @@ Installation
     
 1. Download and install::
 
-        git clone https://github.com/k1000/django-tracker.git
-        cd django-tracker
+        git clone git@github.com:k1000/django-commitlog.git
+        cd django-commitlog
         python setup.py install
 
    or using pip::     
     
-        pip install -e git+https://github.com/k1000/django-tracker.git#egg=tracker
+        pip install -e git@github.com:k1000/django-commitlog.git#egg=commitlog
 
-2. Add "tracker" to your INSTALLED_APPS in "settings.py" 
-3. Run "./manage.py syncdb" to create db tables
-
-Settings
---------
-
-See SETTINGS_ for more info.
-
+2. Add "commitlog" to your INSTALLED_APPS in "settings.py" 
 
 TODO
 ----
-
-    * email notification templates
-    * optional comments
-    * maybe notifing fired by signals instead save method overload ?
-    * RSS feed for open tickets
-    * closing tickets from GIT commit message (using post commit hook)
-    * optional management flow
-
+    * views
+    * diffs
 
 LICENSE
 -------
 
-Django-tracker is released under the MIT License. See the LICENSE_ file for more
+django-commitlog is released under the MIT License. See the LICENSE_ file for more
 details.
 
-.. _LICENSE: http://github.com/k1000/django-backfire/blob/master/LICENSE
-.. _SETTINGS: /k1000/django-tracker/blob/master/SETTINGS.rst
+.. _LICENSE: http://github.com:k1000/django-commitlog/blob/master/LICENSE
+
