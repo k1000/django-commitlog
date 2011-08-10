@@ -2,7 +2,7 @@
 
 #http://packages.python.org/GitPython/0.3.2/tutorial.html#obtaining-diff-information
 #http://djangosnippets.org/snippets/944/
-import time
+import datetime
 from git import *
 from django.template import Library, Node
 from django.template.defaultfilters import stringfilter
@@ -31,8 +31,10 @@ def get_recent_commits(parser, token):
 
 @register.filter
 def mkdate(format_string):
-    'Wed, 7 May 2008 05:56'
-    return time.strftime("%d %b %Y %H:%M", time.gmtime(float(format_string)))
+    try:
+        return datetime.datetime.fromtimestamp( float(format_string) )
+    except ValueError:
+        return format_string
 
 @register.filter
 def truncatechars(format_string, val):

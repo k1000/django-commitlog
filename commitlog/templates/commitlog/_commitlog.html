@@ -1,16 +1,32 @@
-{% load commit_tags %}
-<ul>
-{% for commit in commits %}
-    <li>
-    	{{ commit.hexsha|truncatechars:6 }} {{ commit.author }} 
-    	- <date>{{ commit.committed_date|mkdate }}</date> - {{ commit.message }}
+{% load commit_tags paging_extras %}
+
+{% paginate commits from request as paginated_commits %}
+{% regroup paginated_commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
+<div class="commits">
+<h1>{{ commits_per_day.0.list.0 }} </h1>
+{% for commits in commits_per_day %}
+    <h3>{{ commits.grouper }}</h3>
+    {% for commit in commits.list %}
+    <div class="module">
+        <div class="human">
+            {{ commit.author }}
+            <em>{{ commit.committed_date|mkdate|date:"d b" }}</em>
+        </div>
+        <div class="message"> {{ commit.message }} </div>
+        <dl class="robot">
+            <dd>commit</dd><dt>{{ commit.hexsha|truncatechars:16 }} </dt>
+            {% for parent in commit.parents %}
+            <dd>parent</dd><dt>{{ parent.hexsha|truncatechars:16 }}</dt>
+            {% endfor %}
+        </dl>
     	<ul>
     		{% for file, values in commit.stats.files.items %}
     		<li>
-    			{{ file }} (+{{ values.insertions}}, -{{ values.deletions}})
+    			{{ file }} +{{values.insertions}} -{{values.deletions}}
     		</li>
     		{% endfor %}
     	</ul>
-    </li>
+    </div>
+    {% endfor %}
 {% endfor %}
-</ul>
+</div>
