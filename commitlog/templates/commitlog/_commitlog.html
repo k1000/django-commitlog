@@ -1,7 +1,6 @@
-{% load commit_tags paging_extras %}
+{% load commit_tags %}
 
-{% paginate commits from request as paginated_commits %}
-{% regroup paginated_commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
+{% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 <div class="commits">
 <h1>{{ commits_per_day.0.list.0 }} </h1>
 {% for commits in commits_per_day %}
@@ -29,4 +28,8 @@
     </div>
     {% endfor %}
 {% endfor %}
+
+{% if commits %}
+    <a href="?page={{ next_page }}">NEXT</a>
+{% endif %}
 </div>
