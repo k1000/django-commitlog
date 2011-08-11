@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}{% load commit_tags %}
+
+{% block content %}
+
+<ul>
+{% for element in tree.list_traverse %}
+	<li>{{ element.name }}
+		{% if element.type == "tree" %}
+			<ul>
+				dir
+			</ul>
+		{% endif %}
+	</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
