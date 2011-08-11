@@ -54,7 +54,7 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
                 message = form.cleaned_data["message"]
                 git = repo.git
                 commit_result = git.commit("-am", """%s""" % message)
-                result_msg = u"Commit has een executed. %s" % commit_result
+                result_msg = u"Commit has been executed. <br/>%s" % commit_result
         else:
             result_msg = "There were problems with making commit"
 
