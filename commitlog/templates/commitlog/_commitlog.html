@@ -36,8 +36,8 @@ h3 {
     {% for commit in commits.list %}
     <div class="module">
         <div class="human">
-            {{ commit.author }}
-            <em>{{ commit.committed_date|mkdate|date:"H:m" }}</em>
+            <storng>{{ commit.author }} (author) </storng>
+            <em>{{ commit.committed_date|mkdate|date:"Y-m-d H:i" }}</em>
         </div>
         <div class="message"> {{ commit.message }} </div>
         <dl class="robot">

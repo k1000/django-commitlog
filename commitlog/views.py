@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.response import TemplateResponse
 from django.contrib import messages
 
-from commitlog.settings import REPO_DIR, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW
+from commitlog.settings import REPO_DIR, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST
 from commitlog.forms import FileEditForm
 
 def log_view(request, branch=REPO_BRANCH):
@@ -29,6 +29,24 @@ def log_view(request, branch=REPO_BRANCH):
 if REPO_RESTRICT_VIEW:
     log_view = login_required(log_view)
 
+
+@login_required
+def tree_view(request, branch=REPO_BRANCH, path=None ):
+
+    repo = Repo(REPO_DIR)
+
+    context = dict(
+        branch_name = branch,
+        tree = repo.tree(),
+    )
+
+    return TemplateResponse( 
+        request, 
+        'commitlog/admin_view_tree.html', 
+        context)
+
+
+@login_required
 def edit_file(request, branch=REPO_BRANCH, path=None ):
     import os
     import codecs
@@ -36,6 +54,9 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
     result_msg = ""
     file_source = ""
     repo = Repo(REPO_DIR)
+
+    if path in FILE_BLACK_LIST:
+        pass
 
     file_path = os.path.join( repo.working_dir, path ) #!!! sanitize path
     
@@ -52,8 +73,10 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
                 raise
             finally:
                 message = form.cleaned_data["message"]
+                #index = repo.index
+                #new_commit = index.commit("my commit message")
                 git = repo.git
-                commit_result = git.commit("-am", """%s""" % message)
+                commit_result = git.commit("-m", """%s""" % message)
                 result_msg = u"Commit has been executed. <br/>%s" % commit_result
         else:
             result_msg = "There were problems with making commit"
