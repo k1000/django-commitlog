@@ -4,13 +4,19 @@ About
 *django-commitlog* - view GIT commit log.
 Known to work in Django 1.3
 
+Features
+--------
+
+* View log of commits for given branch
+* Edits existing files with commit message
+
 
 Installation
 ------------
 
 1. Requires GitPython http://packages.python.org/GitPython/0.3.2/index.html::
         
-        pip  install GitPython django-paging
+        pip  install GitPython
 
 2. Download and install::
 
@@ -26,8 +32,7 @@ Installation
 
 TODO
 ----
-    * views
-    * diffs
+    * support múltiple repositiories
 
 LICENSE
 -------
