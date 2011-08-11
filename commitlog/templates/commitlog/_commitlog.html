@@ -1,15 +1,43 @@
 {% load commit_tags %}
 
+<style type="text/css">
+.robot{
+    float: right;
+}
+.human{
+    float: left;
+}
+.module{
+    overflow: hidden;
+    clear: both;
+}
+h3 {
+    font-size: 2em;
+}
+</style>
+
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
+
+<h1><a href="{% url commitlog-branch branch_name %}">Commits at "{{ branch_name }}" branch </a></h1>
+{% if commits %}
+<p class="pager">
+    {% if previous_page %}
+        <a href="?page={{ previous_page }}" class="previous">PREVIOUS</a>
+    {% endif %}
+    <a href="?page={{ next_page }}" class="next">NEXT</a>
+</p>
+{% else %}
+<h2>No more commits.</h2>
+{% endif %}
+
 <div class="commits">
-<h1>{{ commits_per_day.0.list.0 }} </h1>
 {% for commits in commits_per_day %}
     <h3>{{ commits.grouper }}</h3>
     {% for commit in commits.list %}
     <div class="module">
         <div class="human">
             {{ commit.author }}
-            <em>{{ commit.committed_date|mkdate|date:"d b" }}</em>
+            <em>{{ commit.committed_date|mkdate|date:"H:m" }}</em>
         </div>
         <div class="message"> {{ commit.message }} </div>
         <dl class="robot">
@@ -21,7 +49,14 @@
     	<ul>
     		{% for file, values in commit.stats.files.items %}
     		<li>
-    			{{ file }} +{{values.insertions}} -{{values.deletions}}
+    			<a href="/admin/git/master/edit/{{ file }}" >{{ file }}</a>
+                {% if values.insertions %}
+                    +{{values.insertions}} 
+                {% endif %}
+                 
+                {% if values.deletions %}
+                    -{{values.deletions}}
+                {% endif %}
     		</li>
     		{% endfor %}
     	</ul>
@@ -30,6 +65,11 @@
 {% endfor %}
 
 {% if commits %}
-    <a href="?page={{ next_page }}">NEXT</a>
+<p class="pager">
+    {% if previous_page %}
+        <a href="?page={{ previous_page }}" class="previous">PREVIOUS</a>
+    {% endif %}
+    <a href="?page={{ next_page }}" class="next">NEXT</a>
+</p>
 {% endif %}
 </div>
