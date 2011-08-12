@@ -2,12 +2,12 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
-
-{% if file_type.mime == "image" %}
+{{  file_mime_type }}
+{% if file_mime_type == "text" %}
+  {% include "commitlog/_edit_text.html" %}
+{% else %}
   {% include "commitlog/_edit_file.html" %}
   <img src="/{{ path }}" width="300" />
-{% else %}
-  {% include "commitlog/_edit_text.html" %}
 {% endif %}
 
 

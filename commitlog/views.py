@@ -55,27 +55,15 @@ def tree_view(request, branch=REPO_BRANCH, path=None ):
         'commitlog/admin_view_tree.html', 
         context)
 
-def guess_file_type(path):
-    import os
-    basename, extension = os.path.splitext(path)
+def guess_file_type(mime):
     ext = {
-        ".py" : {"type":"python", "mime":"text"},
-        ".html" : {"type":"xml", "mime":"text"},
-        ".css" : {"type":"css", "mime":"text"},
-        ".js" : {"type":"javascript", "mime":"text"},
-        ".json" : {"type":"javascript", "mime":"text"},
-        ".svg" : {"type":"svg", "mime":"text"},
-        ".txt" : {"type":"text", "mime":"text"},
-        ".png" : {"type":"css", "mime":"image"},
-        ".jpg" : {"type":"jpg", "mime":"image"},
-        ".gif" : {"type":"gif", "mime":"image"},
-        ".pdf" : {"type":"pdf", "mime":"doc"},
-        ".doc" : {"type":"doc", "mime":"doc"},
+        "x-python" : "python",
+        "css" : "css",
     }
-    if extension in ext:
-        return ext[extension]
+    if mime in ext:
+        return ext[mime]
     else:
-        return {"type":"text", "mime":"text"}
+        return "text"
 
 def handle_uploaded_file( path, f):
     destination = open(path, 'wb+')
@@ -109,12 +97,15 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         path = path[:-1]
     tree = tree[path]
 
+    if not tree.type  is "blob":
+        #problem
+        pass
+
     file_path = tree.abspath
 
     file_mime = tree.mime_type
     file_mime_type = file_mime.split("/")[0]
-
-    file_type = guess_file_type(path)
+    file_type = guess_file_type(file_mime.split("/")[1])
 
     if file_mime_type == "text":
         form_class = TextFileEditForm
@@ -162,6 +153,7 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         file_source = file_source,
         file_type = file_type,
         result_msg = result_msg,
+        file_mime_type = file_mime_type,
         branch_name = branch,
         dir_path = path.split("/")[:-1],
         path = path,
