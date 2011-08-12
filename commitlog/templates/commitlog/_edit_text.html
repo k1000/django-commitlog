@@ -1,0 +1,30 @@
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.css" /> 
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/theme_dark.css" />
+
+{% include "commitlog/_edit_file.html" %}
+
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
+
+{% if file_type.type %}
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_type.type }}/{{ file_type.type }}.js"></script>
+{% endif %}
+
+{# <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/python-complete.js"></script> #}
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>
+<script> 
+
+var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), {
+  mode: {name: "{{ file_type.type }}"},
+  lineNumbers: true,
+  indentUnit: 4,
+  onCursorActivity: function() {
+    editor.setLineClass(hlLine, null);
+    hlLine = editor.setLineClass(editor.getCursor().line, "activeline");
+  }
+});
+var hlLine = editor.setLineClass(0, "activeline");
+
+zen_textarea.setup({pretty_break: true})
+</script> 
