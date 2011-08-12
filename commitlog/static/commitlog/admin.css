@@ -1,0 +1,45 @@
+/* @override http://127.0.0.1:8000/media/commitlog/admin.css */
+
+.commits {
+	color: #838b9c;
+}
+.robot{
+    float: right;
+}
+.human{
+    float: left;
+}
+.human em{
+    float: left;
+}
+.message {
+	float: left;
+	color: black;
+}
+.commit{
+    overflow: hidden;
+    clear: both;
+    border-top: 1px solid #dcded7;
+    background: #f8fafa;
+    padding: 5px;
+}
+.commit ul{
+	clear: left;
+	margin-left: 14em;
+}
+h3 {
+    font-size: 2em;
+}
+textarea{
+	clear: left;
+	width: 100%;
+	background: #fafafa;
+}
+ul {
+	clear: both;
+}
+.breadcrumbs li{
+	float: left;
+	list-style: none;
+	list-style-type: none;
+}

@@ -1,15 +1,28 @@
 {% extends "admin/base_site.html" %}{% load commit_tags %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
+
+<ul class="breadcrumbs">
+	<li><a href="{% url commitlog-tree-view branch_name "" %}" >/</a>
+{% for crumb in dir_path %}
+	<li><a href="{% url commitlog-tree-view branch_name crumb %}" >{{crumb}}/</a>
+{% endfor %}
+</ul>
 
 <ul>
-{% for element in tree.list_traverse %}
-	<li>{{ element.name }}
+{% if dir_path.0 %}
+	<li><a href="./">..</a>
+{% endif %}
+
+{% for element in tree %}
+	<li>
 		{% if element.type == "tree" %}
-			<ul>
-				dir
-			</ul>
+			<a href="{% url commitlog-tree-view branch_name element.path %}" >{{ element.name }}/</a>
+		{% else %}
+			<a href="{% url commitlog-edit-file branch_name element.path %}" >{{ element.name }}</a>
 		{% endif %}
+		<small>{{ element.size }}kB</small>
 	</li>
 {% endfor %}
 </ul>

@@ -1,20 +1,8 @@
 {% load commit_tags %}
 
-<style type="text/css">
-.robot{
-    float: right;
-}
-.human{
-    float: left;
-}
-.module{
-    overflow: hidden;
-    clear: both;
-}
-h3 {
-    font-size: 2em;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
+
+
 
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
@@ -34,10 +22,10 @@ h3 {
 {% for commits in commits_per_day %}
     <h3>{{ commits.grouper }}</h3>
     {% for commit in commits.list %}
-    <div class="module">
+    <div class="commit">
         <div class="human">
             <storng>{{ commit.author }} (author) </storng>
-            <em>{{ commit.committed_date|mkdate|date:"Y-m-d H:i" }}</em>
+            <em>{{ commit.committed_date|mkdate|date:"H:i" }}</em>
         </div>
         <div class="message"> {{ commit.message }} </div>
         <dl class="robot">
@@ -51,11 +39,11 @@ h3 {
     		<li>
     			<a href="/admin/git/master/edit/{{ file }}" >{{ file }}</a>
                 {% if values.insertions %}
-                    +{{values.insertions}} 
+                    <em>+{{values.insertions}}</em>
                 {% endif %}
                  
                 {% if values.deletions %}
-                    -{{values.deletions}}
+                    <em>-{{values.deletions}}</em>
                 {% endif %}
     		</li>
     		{% endfor %}
