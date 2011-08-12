@@ -7,8 +7,8 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
 
-{% if file_type.type %}
-<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_type.type }}/{{ file_type.type }}.js"></script>
+{% if file_type %}
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_type }}/{{ file_type }}.js"></script>
 {% endif %}
 
 {# <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/python-complete.js"></script> #}
@@ -16,7 +16,7 @@
 <script> 
 
 var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), {
-  mode: {name: "{{ file_type.type }}"},
+  mode: {name: "{{ file_type }}"},
   lineNumbers: true,
   indentUnit: 4,
   onCursorActivity: function() {
