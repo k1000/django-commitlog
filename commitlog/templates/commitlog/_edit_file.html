@@ -4,7 +4,7 @@
     <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
 {% endfor %}
 </ul>
-
+{{ size }}
 
 <h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
 <h3>{% if result_msg %}

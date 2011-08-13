@@ -4,7 +4,7 @@ from git import *
 from django.contrib.auth.decorators import login_required
 from django.template.response import TemplateResponse
 
-from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST
+from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
 from commitlog.forms import TextFileEditForm, FileEditForm
 
 def log_view(request, repo_name, branch=REPO_BRANCH):
@@ -14,6 +14,7 @@ def log_view(request, repo_name, branch=REPO_BRANCH):
     commits = repo.iter_commits(branch, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
 
     context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
         commits = commits,
@@ -42,11 +43,11 @@ def tree_view(request, repo_name, branch=REPO_BRANCH, path=None ):
         tree = tree[path]
 
     context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
         tree = tree.list_traverse(depth = 1),
         breadcrumbs = make_crumbs(path),
-
         dir_path = path.split("/"),
     )
 
@@ -112,8 +113,10 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
     
     mime = tree.mime_type.split("/")
     file_meta = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         abspath = tree.abspath,
         mime = tree.mime_type,
+        size = tree.size,
         mime_type = mime[0],
         type = guess_file_type(mime[1]),
     )
@@ -150,12 +153,13 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
             f = codecs.open(file_meta["abspath"], encoding='utf-8',)
             file_source = f.read
         else:
-            file_source = file_path
+            file_source = file_meta["abspath"]
 
         form = form_class( initial={"file_source":file_source} )
 
     #import ipdb; ipdb.set_trace()
     context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         form= form,
         file_source = file_source,
         breadcrumbs = make_crumbs(path),
@@ -175,4 +179,10 @@ def branches_view(request, repo_name):
     pass
 
 def repos_view(request):
-    pass
+    context = {
+        "REPOS":REPOS,
+    }
+    return TemplateResponse( 
+        request, 
+        'commitlog/admin_list_repos.html', 
+        context)
