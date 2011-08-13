@@ -1,0 +1,19 @@
+<ul class="breadcrumbs">
+    <li><a href="{% url commitlog-tree-view branch_name "" %}" >/</a>
+{% for crumb in dir_path %}
+    <li><a href="{% url commitlog-tree-view branch_name crumb %}" >{{crumb}}/</a>
+{% endfor %}
+</ul>
+
+
+<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch branch_name %}">{{ branch_name }}</a>"</h1>
+<h3>{% if result_msg %}
+	{{ result_msg|safe }}
+{% endif %}</h3>
+<form action="" method="post" enctype="multipart/form-data" >
+	<ul>
+	{{ form.as_p }}
+	</ul>
+	{% csrf_token %}
+	<p><button>COMMIT</button></p>
+</form>
