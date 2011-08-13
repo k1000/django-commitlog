@@ -1,29 +1,13 @@
-{% extends "admin/base_site.html" %}{% load commit_tags %}
+{% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
-{{  file_mime_type }}
-{% if file_mime_type == "text" %}
+
+{% if file_meta.mime_type == "text" %}
   {% include "commitlog/_edit_text.html" %}
 {% else %}
   {% include "commitlog/_edit_file.html" %}
   <img src="/{{ path }}" width="300" />
 {% endif %}
-
-
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/theme_dark.css" />
-<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch branch_name %}">{{ branch_name }}</a>"</h1>
-<h3>{% if result_msg %}
-	{{ result_msg }}
-{% endif %}</h3>
-{{ breadcrumbs }}
-<h2>{{ path }}</H2>
-<form action="" method="post">
-	<ul>
-	{{ form.as_p }}
-	</ul>
-	{% csrf_token %}
-	<p><button>COMMIT</button></p>
-</form>
 
 {% endblock %}
