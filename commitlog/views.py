@@ -1,19 +1,20 @@
-# Create your views here.
+
 import codecs
 from git import *
 from django.contrib.auth.decorators import login_required
 from django.template.response import TemplateResponse
 
-from commitlog.settings import REPO_DIR, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST
+from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST
 from commitlog.forms import TextFileEditForm, FileEditForm
 
-def log_view(request, branch=REPO_BRANCH):
+def log_view(request, repo_name, branch=REPO_BRANCH):
     page = int(request.GET.get("page", 0))
-    repo = Repo(REPO_DIR)
+    repo = Repo(REPOS[repo_name])
     #import ipdb; ipdb.set_trace()
     commits = repo.iter_commits(branch, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
 
     context = dict(
+        repo_name = repo_name,
         branch_name = branch,
         commits = commits,
         next_page = page + 1,
@@ -31,9 +32,9 @@ if REPO_RESTRICT_VIEW:
 
 
 @login_required
-def tree_view(request, branch=REPO_BRANCH, path=None ):
+def tree_view(request, repo_name, branch=REPO_BRANCH, path=None ):
 
-    repo = Repo(REPO_DIR)
+    repo = Repo(REPOS[repo_name])
     tree = repo.tree()
     if path:
         if path[-1:] == "/":
@@ -41,9 +42,11 @@ def tree_view(request, branch=REPO_BRANCH, path=None ):
         tree = tree[path]
 
     context = dict(
+        repo_name = repo_name,
         branch_name = branch,
         tree = tree.list_traverse(depth = 1),
         breadcrumbs = make_crumbs(path),
+
         dir_path = path.split("/"),
     )
 
@@ -90,15 +93,14 @@ def make_crumbs( path ):
     return breadcrumbs
 
 @login_required
-def edit_file(request, branch=REPO_BRANCH, path=None ):
+def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 
-    result_msg = ""
-    file_source = ""
+    result_msg = file_source = ""
 
     if path in FILE_BLACK_LIST:
         pass
 
-    repo = Repo(REPO_DIR)    
+    repo = Repo(REPOS[repo_name])
     tree = repo.tree()
     if path[-1:] == "/":
         path = path[:-1]
@@ -159,6 +161,7 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         breadcrumbs = make_crumbs(path),
         file_meta = file_meta,
         result_msg = result_msg,
+        repo_name = repo_name,
         branch_name = branch,
         path = path,
     )
@@ -167,3 +170,9 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         request, 
         'commitlog/admin_edit_file.html', 
         context)
+
+def branches_view(request, repo_name):
+    pass
+
+def repos_view(request):
+    pass

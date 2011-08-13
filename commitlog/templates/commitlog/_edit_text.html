@@ -7,12 +7,14 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
 
-{% if file_type %}
-<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_type }}/{{ file_type }}.js"></script>
-{% endif %}
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_mime.type }}/{{ file_mime.type }}.js"></script>
 
 {# <script type="text/javascript" src="{{ MEDIA_URL }}commitlog/python-complete.js"></script> #}
-<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>
+
+{% if file_mime.type == "css" or file_mime.type == "html"%}
+<script type="text/javascript" src="{{ MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>	
+{% endif %}
+
 <script> 
 
 var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), {

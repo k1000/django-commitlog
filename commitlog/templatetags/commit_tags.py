@@ -7,7 +7,7 @@ from git import *
 from django.template import Library, Node
 from django.template.defaultfilters import stringfilter
 
-from commitlog.settings import REPO_DIR, REPO_BRANCH
+from commitlog.settings import REPOS, REPO_BRANCH
 register = Library()
 
 class LatestCommitsNode(Node):
@@ -15,7 +15,7 @@ class LatestCommitsNode(Node):
         self.num, self.varname = num, varname
 
     def render(self, context):
-        repo = Repo(REPO_DIR)
+        repo = Repo(REPOS[repo_name])
         context[self.varname] = repo.iter_commits(REPO_BRANCH, max_count=self.num)
         return ''
 

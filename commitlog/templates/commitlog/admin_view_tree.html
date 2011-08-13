@@ -4,9 +4,9 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
 
 <ul class="breadcrumbs">
-	<li><a href="{% url commitlog-tree-view branch_name "" %}" >/</a>
+	<li><a href="{% url commitlog-tree-view repo_name branch_name "" %}" >/</a>
 {% for crumb in dir_path %}
-	<li><a href="{% url commitlog-tree-view branch_name crumb %}" >{{crumb}}/</a>
+	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb %}" >{{crumb}}/</a>
 {% endfor %}
 </ul>
 
@@ -18,9 +18,9 @@
 {% for element in tree %}
 	<li>
 		{% if element.type == "tree" %}
-			<a href="{% url commitlog-tree-view branch_name element.path %}" >{{ element.name }}/</a>
+			<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" >{{ element.name }}/</a>
 		{% else %}
-			<a href="{% url commitlog-edit-file branch_name element.path %}" >{{ element.name }}</a>
+			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" >{{ element.name }}</a>
 		{% endif %}
 		<small>{{ element.size }}kB</small>
 	</li>
