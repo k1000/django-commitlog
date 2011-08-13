@@ -37,7 +37,7 @@
     	<ul>
     		{% for file, values in commit.stats.files.items %}
     		<li>
-    			<a href="/admin/git/master/edit/{{ file }}" >{{ file }}</a>
+    			<a href="{% url commitlog-edit-file repo_name branch_name file %}" >{{ file }}</a>
                 {% if values.insertions %}
                     <em>+{{values.insertions}}</em>
                 {% endif %}

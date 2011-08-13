@@ -11,4 +11,4 @@ REPO_ITEMS_IN_PAGE = getattr(settings, "REPO_VIEW_IN_PAGE", 10)
 FILE_BLACK_LIST = getattr(settings,"FILE_BLACK_LIST", 
 	("settings.py",) 
 )
- 
+GITTER_MEDIA_URL = getattr(settings,"GITTER_MEDIA_URL", settings.MEDIA_URL ) 
