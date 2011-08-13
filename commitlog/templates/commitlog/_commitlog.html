@@ -6,7 +6,7 @@
 
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
-<h1><a href="{% url commitlog-branch branch_name %}">Commits at "{{ branch_name }}" branch </a></h1>
+<h1><a href="{% url commitlog-branch repo_name branch_name %}">Commits at "{{ branch_name }}" branch </a></h1>
 {% if commits %}
 <p class="pager">
     {% if previous_page %}
