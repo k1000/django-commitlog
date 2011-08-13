@@ -46,6 +46,15 @@ def tree_view(request, branch=REPO_BRANCH, path=None ):
         context)
 
 
+def make_crumbs( path ):
+    breadcrumbs = []
+    bread = path.split("/")
+    for crumb in range(0, len(bread)-1):
+        breadcrumbs.append( (bread[crumb], "/".join(bread[:crumb+1]) ))
+        
+    breadcrumbs.append( (bread[-1], "#") )
+    return breadcrumbs
+
 @login_required
 def edit_file(request, branch=REPO_BRANCH, path=None ):
     import os
@@ -64,7 +73,6 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         
         form = FileEditForm( request.POST )
         if form.is_valid():
-            #f = open(file_path, "rw")
             f = codecs.open(file_path, encoding='utf-8', mode='w')
             file_source = form.cleaned_data["file_source"]
             try:
@@ -86,10 +94,13 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
         file_source = f.read
 
         form = FileEditForm( initial={"file_source":file_source} )
-    #
+    
+
+    #import ipdb; ipdb.set_trace()
     context = dict(
         form= form,
         file_source = file_source,
+        breadcrumbs = make_crumbs(path),
         result_msg = result_msg,
         branch_name = branch,
         path = path,
