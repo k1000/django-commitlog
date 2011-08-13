@@ -3,7 +3,6 @@ import codecs
 from git import *
 from django.contrib.auth.decorators import login_required
 from django.template.response import TemplateResponse
-from django.contrib import messages
 
 from commitlog.settings import REPO_DIR, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST
 from commitlog.forms import TextFileEditForm, FileEditForm
@@ -31,9 +30,6 @@ if REPO_RESTRICT_VIEW:
     log_view = login_required(log_view)
 
 
-
-
-
 @login_required
 def tree_view(request, branch=REPO_BRANCH, path=None ):
 
@@ -47,6 +43,7 @@ def tree_view(request, branch=REPO_BRANCH, path=None ):
     context = dict(
         branch_name = branch,
         tree = tree.list_traverse(depth = 1),
+        breadcrumbs = make_crumbs(path),
         dir_path = path.split("/"),
     )
 
@@ -63,7 +60,7 @@ def guess_file_type(mime):
     if mime in ext:
         return ext[mime]
     else:
-        return "text"
+        return mime
 
 def handle_uploaded_file( path, f):
     destination = open(path, 'wb+')
@@ -75,11 +72,13 @@ def write_file( file_path, file_source):
     f = codecs.open(file_path, encoding='utf-8', mode='w')
     try:
         f.write(file_source)
-    except Exception, e:
-        raise
+    except IOError:
+        return False
     finally:
         return True
 
+class NotAllowedToView(Exception):
+    """You are not allowed to view/edit this file"""
 
 def make_crumbs( path ):
     breadcrumbs = []
@@ -87,20 +86,19 @@ def make_crumbs( path ):
     for crumb in range(0, len(bread)-1):
         breadcrumbs.append( (bread[crumb], "/".join(bread[:crumb+1]) ))
         
-    breadcrumbs.append( (bread[-1], "#") )
+    #breadcrumbs.append( (bread[-1], "#") )
     return breadcrumbs
 
 @login_required
 def edit_file(request, branch=REPO_BRANCH, path=None ):
-    import os
 
     result_msg = ""
     file_source = ""
-    repo = Repo(REPO_DIR)
 
     if path in FILE_BLACK_LIST:
         pass
-    
+
+    repo = Repo(REPO_DIR)    
     tree = repo.tree()
     if path[-1:] == "/":
         path = path[:-1]
@@ -109,24 +107,25 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
     if not tree.type  is "blob":
         #problem
         pass
+    
+    mime = tree.mime_type.split("/")
+    file_meta = dict(
+        abspath = tree.abspath,
+        mime = tree.mime_type,
+        mime_type = mime[0],
+        type = guess_file_type(mime[1]),
+    )
 
-    file_path = tree.abspath
-
-    file_mime = tree.mime_type
-    file_mime_type = file_mime.split("/")[0]
-    file_type = guess_file_type(file_mime.split("/")[1])
-
-    if file_mime_type == "text":
+    if file_meta["mime_type"] == "text":
         form_class = TextFileEditForm
     else:
         form_class = FileEditForm
     
     if request.method == 'POST':
         form = form_class( request.POST, request.FILES )
-
         if form.is_valid():
             #f = open(file_path, "rw")
-            if file_mime_type == "text":
+            if file_meta["mime_type"] == "text":
                 file_source = form.cleaned_data["file_source"]
                 write_file(file_path, file_source )
             else:
@@ -136,38 +135,31 @@ def edit_file(request, branch=REPO_BRANCH, path=None ):
             message = form.cleaned_data["message"]
             try:
                 #git = repo.git
-                #commit_result = git.commit("-m", """%s""" % message)
-                
+                #commit_result = git.commit("-m", """%s""" % message)    
                 commit_result = index.commit("""%s""" % message)
-            except GitCommandError as er:
-                result_msg = u"There been problem applying you commit. %s" % er
-                raise
+            except GitCommandError:
+                result_msg = u"There been problem applying the commit. %s"
             else:
                 result_msg = u"Commit has been executed. <br/>%s" % commit_result
         else:
             result_msg = "There were problems with making commit"
-
     else:
-        
-        if file_mime_type == "text":
-            f = codecs.open(file_path, encoding='utf-8',)
+        if file_meta["mime_type"] == "text":
+            f = codecs.open(file_meta["abspath"], encoding='utf-8',)
             file_source = f.read
         else:
             file_source = file_path
 
         form = form_class( initial={"file_source":file_source} )
-    
 
     #import ipdb; ipdb.set_trace()
     context = dict(
         form= form,
         file_source = file_source,
         breadcrumbs = make_crumbs(path),
-        file_type = file_type,
+        file_meta = file_meta,
         result_msg = result_msg,
-        file_mime_type = file_mime_type,
         branch_name = branch,
-        dir_path = path.split("/")[:-1],
         path = path,
     )
         

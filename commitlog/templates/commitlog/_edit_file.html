@@ -1,7 +1,7 @@
 <ul class="breadcrumbs">
     <li><a href="{% url commitlog-tree-view branch_name "" %}" >/</a>
-{% for crumb in dir_path %}
-    <li><a href="{% url commitlog-tree-view branch_name crumb %}" >{{crumb}}/</a>
+{% for crumb, path in breadcrumbs %}
+    <li><a href="{% url commitlog-tree-view branch_name path %}" >{{crumb}}/</a> 
 {% endfor %}
 </ul>
 
