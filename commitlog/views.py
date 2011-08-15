@@ -224,7 +224,7 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         tree = tree[path]
     except KeyError:
         msg = MSG_NO_FILE_IN_TREE
-        return error_view( request, result_msg)
+        return error_view( request, msg)
 
     if not tree.type  is "blob":
         msg = MSG_CANT_VIEW
@@ -247,10 +247,9 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         form_class = FileEditForm
     
     if request.method == 'POST':
+        
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
-            #f = open(file_path, "rw")
-            
             if file_meta["mime_type"] == "text":
                 file_source = form.cleaned_data["file_source"]
                 write_file(file_path, file_source )
@@ -409,6 +408,12 @@ def commit_view(request, repo_name, branch, commit_sha=None):
         context)
         
 def branches_view(request, repo_name):
+    pass
+
+def upload_file(request, repo_name, branch_name, dir):
+    pass
+
+def rename_file(request, repo_name, branch_name, path):
     pass
 
 def repos_view(request):

@@ -30,7 +30,7 @@ div.CodeMirror {
 .cm-undefined {color: white;}
 .cm-minus {color: red;}
 .cm-plus {color:#D5FCB0;}
-.cm-rangeinfo {color: #FFFFB7; background: gray;}
+.cm-rangeinfo {color: #FFFFB7; background: #444;}
 
 #activeline {
 	background: red;
