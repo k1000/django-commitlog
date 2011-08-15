@@ -1,10 +1,12 @@
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/diff/diff.js"></script>
 
-<h2>Diff</h2>
-<textarea id="diff" cols="30" rows="10">{{ diff }}</textarea>
+<div id="diff">
+	<h2>Diff</h2>
+	<textarea id="diff_source" cols="30" rows="10">{{ diff }}</textarea>
+</div>
 
 <script> 
-var editor = CodeMirror.fromTextArea(document.getElementById("diff"), {
+var editor = CodeMirror.fromTextArea(document.getElementById("diff_source"), {
   mode: {name: "diff"},
   lineNumbers: false,
   indentUnit: 4,
