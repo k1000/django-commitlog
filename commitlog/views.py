@@ -1,70 +1,42 @@
-
+import os
 import codecs
 from git import *
 from django.contrib.auth.decorators import login_required
 from django.template.response import TemplateResponse
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
-from commitlog.forms import TextFileEditForm, FileEditForm
+from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm
 
-def log_view(request, repo_name, branch=REPO_BRANCH):
-    page = int(request.GET.get("page", 0))
-    repo = Repo(REPOS[repo_name])
-    #import ipdb; ipdb.set_trace()
-    commits = repo.iter_commits(branch, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
+MSG_COMMIT_ERROR = "There were problems with making commit"
+MSG_COMMIT_SUCCESS = u"Commit has been executed. <br/>%s"
+MSG_NO_FILE = "File hasn't been found."
+MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
+MSG_CANT_VIEW = "Can't view file."
 
-    context = dict(
-        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
-        repo_name = repo_name,
-        branch_name = branch,
-        commits = commits,
-        next_page = page + 1,
-    )
-    if page > 0:
-        context["previous_page"] = page-1
-
-    return TemplateResponse( 
-        request, 
-        'commitlog/admin_commitlog.html', 
-        context)
-
-if REPO_RESTRICT_VIEW:
-    log_view = login_required(log_view)
-
-
-@login_required
-def tree_view(request, repo_name, branch=REPO_BRANCH, path=None ):
-
-    repo = Repo(REPOS[repo_name])
-    tree = repo.tree()
-    if path:
-        if path[-1:] == "/":
-            path = path[:-1]
-        tree = tree[path]
-
-    context = dict(
-        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
-        repo_name = repo_name,
-        branch_name = branch,
-        tree = tree.list_traverse(depth = 1),
-        breadcrumbs = make_crumbs(path),
-        dir_path = path.split("/"),
-    )
-
-    return TemplateResponse( 
-        request, 
-        'commitlog/admin_view_tree.html', 
-        context)
-
-def guess_file_type(mime):
-    ext = {
-        "x-python" : "python",
-        "css" : "css",
+def file_type_from_mime(mime):
+    types = {
+        "text/x-python" : "python",
+        "text/css" : "css",
+        "text/html" : "xml",
+        "aplication/javascript" : "javascript",
+        "aplication/json" : "javascript",
     }
-    if mime in ext:
-        return ext[mime]
+    if mime in types:
+        return types[mime]
     else:
         return mime
+
+def file_type_from_ext(ext):
+    types = {
+        ".py" : "python",
+        ".css" : "css",
+        ".html" : "xml",
+        ".js" : "javascript",
+    }
+    if ext in types:
+        return types[ext]
+    else:
+        return ext
 
 def handle_uploaded_file( path, f):
     destination = open(path, 'wb+')
@@ -72,17 +44,14 @@ def handle_uploaded_file( path, f):
         destination.write(chunk)
     destination.close()
 
-def write_file( file_path, file_source):
-    f = codecs.open(file_path, encoding='utf-8', mode='w')
+def write_file( file_path, file_source, mode="w"):
+    f = codecs.open(file_path, encoding='utf-8', mode=mode)
     try:
         f.write(file_source)
     except IOError:
         return False
     finally:
         return True
-
-class NotAllowedToView(Exception):
-    """You are not allowed to view/edit this file"""
 
 def make_crumbs( path ):
     breadcrumbs = []
@@ -93,23 +62,173 @@ def make_crumbs( path ):
     #breadcrumbs.append( (bread[-1], "#") )
     return breadcrumbs
 
+def commit(repo, message, path ):
+    git = repo.git
+    #index = repo.index 
+    try:
+        git.add(path)    
+        commit_result = git.commit("-m", """%s""" % message)
+        #commit_result = index.commit("""%s""" % message)
+    except GitCommandError:
+        result_msg = MSG_COMMIT_ERROR
+    else:
+        result_msg = MSG_COMMIT_SUCCESS % commit_result
+    return result_msg
+
+def get_repo( repo_name ):
+    return Repo(REPOS[repo_name])
+
+def get_commit_tree( repo, commit_sha=None ):
+    commit = None
+    if commit_sha:
+        commit = list(repo.iter_commits( rev=commit_sha ))[0]
+        tree = commit.tree
+    else:
+        tree = repo.tree()
+    return commit, tree
+
+def get_diff(repo, path=None, commit_a=None, commit_b=None):
+    git = repo.git
+    args = []
+    if commit_a: args+=[commit_a]
+    if commit_b: args+=[commit_b]
+    if path: args +=[ "--", path ]
+    return git.diff( *args )
+
+def error_view(request, msg, code=None):
+    return TemplateResponse( 
+            request, 
+            'commitlog/error.html', 
+            {
+                "result_msg":msg,
+            })
+
+class NotAllowedToView(Exception):
+    """You are not allowed to view/edit this file"""
+
+
+def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
+    page = int(request.GET.get("page", 0))
+    repo = get_repo( repo_name )
+    if path:
+        paths = [path]
+    else:
+        paths = []
+    commits = repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
+
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        repo_name = repo_name,
+        branch_name = branch,
+        commits = commits,
+        next_page = page + 1,
+        path = path,
+    )
+    if page > 0:
+        context["previous_page"] = page-1
+
+    return TemplateResponse( 
+        request, 
+        'commitlog/commitlog.html', 
+        context)
+
+if REPO_RESTRICT_VIEW:
+    log_view = login_required(log_view)
+
+
+@login_required
+def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
+    
+    repo = get_repo( repo_name )
+    commit, tree = get_commit_tree(repo, commit_sha)
+
+    if path:
+        if path[-1:] == "/":
+            path = path[:-1]
+        tree = tree[path]
+
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        repo_name = repo_name,
+        branch_name = branch,
+        commit = commit,
+        tree = tree.list_traverse(depth = 1),
+        breadcrumbs = make_crumbs(path),
+        dir_path = path.split("/"),
+    )
+
+    return TemplateResponse( 
+        request, 
+        'commitlog/view_tree.html', 
+        context)
+
+
+@login_required
+def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
+    result_msg = file_source = ""
+    form_class = TextFileEditForm
+
+    file_path = path #!!! FIX security
+    #TODO check if file exist allready
+    file_meta = dict(
+        type = "python",
+    )
+
+    if request.method == 'POST':
+        form = form_class( request.POST, request.FILES )
+        if form.is_valid():
+            repo = Repo(REPOS[repo_name])
+
+            file_source = form.cleaned_data["file_source"]
+            write_file(file_path, file_source )
+
+            message = form.cleaned_data["message"]
+            result_msg = commit(repo, message, file_path )
+        else:
+            result_msg = MSG_COMMIT_ERROR
+    else:
+        form = form_class( )
+    
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        form= form,
+        breadcrumbs = make_crumbs(path),
+        result_msg = result_msg,
+        file_meta = file_meta,
+        repo_name = repo_name,
+        branch_name = branch,
+        path = path,
+    )
+    return TemplateResponse( 
+        request, 
+        'commitlog/new_file.html', 
+        context)
+
 @login_required
 def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 
     result_msg = file_source = ""
 
     if path in FILE_BLACK_LIST:
-        pass
-
-    repo = Repo(REPOS[repo_name])
-    tree = repo.tree()
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, result_msg)
+    
     if path[-1:] == "/":
         path = path[:-1]
-    tree = tree[path]
+    file_path = path #!!! FIX security
+
+    repo = get_repo( repo_name )
+    tree = repo.tree()
+    
+    try:
+        tree = tree[path]
+    except KeyError:
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, result_msg)
 
     if not tree.type  is "blob":
-        #problem
-        pass
+        msg = MSG_CANT_VIEW
+        return error_view( request, msg)
     
     mime = tree.mime_type.split("/")
     file_meta = dict(
@@ -117,11 +236,12 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         abspath = tree.abspath,
         mime = tree.mime_type,
         size = tree.size,
+        tree = tree,
         mime_type = mime[0],
-        type = guess_file_type(mime[1]),
+        type = file_type_from_mime(tree.mime_type),
     )
 
-    if file_meta["mime_type"] == "text":
+    if file_meta["mime_type"] in ["text", "application"]:
         form_class = TextFileEditForm
     else:
         form_class = FileEditForm
@@ -130,28 +250,20 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
             #f = open(file_path, "rw")
+            
             if file_meta["mime_type"] == "text":
                 file_source = form.cleaned_data["file_source"]
                 write_file(file_path, file_source )
             else:
                 handle_uploaded_file(file_path, request.FILES['file_source'])
 
-            index = repo.index
             message = form.cleaned_data["message"]
-            try:
-                #git = repo.git
-                #commit_result = git.commit("-m", """%s""" % message)    
-                commit_result = index.commit("""%s""" % message)
-            except GitCommandError:
-                result_msg = u"There been problem applying the commit. %s"
-            else:
-                result_msg = u"Commit has been executed. <br/>%s" % commit_result
+            result_msg = commit(repo, message, file_path )
         else:
-            result_msg = "There were problems with making commit"
+            result_msg = MSG_COMMIT_ERROR
     else:
-        if file_meta["mime_type"] == "text":
-            f = codecs.open(file_meta["abspath"], encoding='utf-8',)
-            file_source = f.read
+        if file_meta["mime_type"] in ["text", "application"]:
+            file_source = tree.data_stream[3].read
         else:
             file_source = file_meta["abspath"]
 
@@ -172,17 +284,144 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         
     return TemplateResponse( 
         request, 
-        'commitlog/admin_edit_file.html', 
+        'commitlog/edit_file.html', 
         context)
 
+def delete_file(request, repo_name, branch, path):
+    repo = get_repo( repo_name )
+    tree = repo.tree()
+    if path[-1:] == "/":
+        path = path[:-1]
+    
+    tree = tree[path]
+
+    if request.method == "POST":
+        form = FileDeleteForm(request.POST)
+        if form.is_valid():
+            if os.path.isfile(path):
+                os.remove(path)
+            git = repo.git
+            del_message = git.rm(path)
+    else:
+        form = FileDeleteForm()
+    
+    context = dict(
+        breadcrumbs = make_crumbs(path),
+        form = form,
+        del_message = del_message,
+        repo_name = repo_name,
+        branch_name = branch,
+        path = path,
+    )
+    return TemplateResponse( 
+        request, 
+        'commitlog/delete_file.html', 
+        context)
+
+def diff_view(request, repo_name, branch, path, commits=[]):
+    """
+    view file diffs betwin given commits
+    """
+    pass
+
+def view_file(request, repo_name, branch, path, commit_sha=None,):
+    """
+    view file in the commit
+    """
+    file_source = ""
+
+    if path in FILE_BLACK_LIST:
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, msg)
+    
+    file_path = path #!!! FIX security
+    if path[-1:] == "/": path = path[:-1]
+    
+    repo = get_repo( repo_name )
+    commit, tree = get_commit_tree( repo, commit_sha )
+
+
+    diff = get_diff( repo, path, commit.parents[0].hexsha, commit.hexsha )
+
+    try:
+        tree = tree[path]
+    except KeyError:
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, msg )
+
+    if not tree.type  is "blob":
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, msg )
+    
+    mime = tree.mime_type.split("/")
+    if mime[0] in ["text", "application"]:
+        file_source = tree.data_stream[3].read
+    else:
+        file_source = tree.abspath
+    
+
+    file_meta = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        abspath = tree.abspath,
+        mime = tree.mime_type,
+        size = tree.size,
+        tree = tree,
+        mime_type = mime[0],
+        type = file_type_from_mime(tree.mime_type),
+    )
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        file_source = file_source,
+        breadcrumbs = make_crumbs(path),
+        commit = commit,
+        diff = diff,
+        file_meta = file_meta,
+        repo_name = repo_name,
+        branch_name = branch,
+        path = path,
+    )
+        
+    return TemplateResponse( 
+        request, 
+        'commitlog/view_file.html', 
+        context)
+
+def commit_view(request, repo_name, branch, commit_sha=None):
+    """
+    view diffs of affeted files in the commit
+    """
+    commit = diff = None
+    repo = get_repo( repo_name )
+    commit_list = list(repo.iter_commits( rev = commit_sha ))
+    if commit_list:
+        commit = commit_list[0]
+        diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha,  )
+
+    context = dict(
+        repo_name = repo_name,
+        branch_name = branch,
+        diff = diff,
+        commit = commit,
+    )
+    return TemplateResponse( 
+        request, 
+        'commitlog/commit.html', 
+        context)
+        
 def branches_view(request, repo_name):
     pass
 
 def repos_view(request):
     context = {
-        "REPOS":REPOS,
+        "repos":dict([ (repo_name, get_repo( repo_name )) for repo_name in REPOS]),
     }
     return TemplateResponse( 
         request, 
-        'commitlog/admin_list_repos.html', 
+        'commitlog/list_repos.html', 
         context)
+
+def undo_commit(request):
+    """
+    undo last commit
+    """
+    pass

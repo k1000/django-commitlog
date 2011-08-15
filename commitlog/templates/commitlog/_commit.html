@@ -1,0 +1,34 @@
+ {% load commit_tags %}
+    <div class="commit">
+        <div class="human">
+            <storng>{{ commit.author }} (author) </storng>
+            <em>
+                {# {{ commit.committed_date|mkdate|date:"H:i" }} #}
+                 {{ commit.committed_date|mkdate|timesince }}
+            </em>
+        </div>
+        <div class="message"> {{ commit.message }} </div>
+        <dl class="robot">
+            <dd>commit:</dd><dt><a href="{% url commitlog-commit-view repo_name branch_name commit.hexsha %}">{{ commit.hexsha|truncatechars:16 }}</a> </dt>
+            
+            <dd>tree:</dd><dt><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.tree.hexsha|truncatechars:16 }}</a></dt>
+
+            {% for parent in commit.parents %}
+            <dd>parent:</dd><dt><a href="{% url commitlog-commit-view repo_name branch_name parent.hexsha %}">{{ parent.hexsha|truncatechars:16 }}</a></dt>
+            {% endfor %}
+        </dl>
+    	<ul>
+    		{% for file, values in commit.stats.files.items %}
+    		<li>
+    			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha file %}" >{{ file }}</a>
+                {% if values.insertions %}
+                    <em>+{{values.insertions}}</em>
+                {% endif %}
+                 
+                {% if values.deletions %}
+                    <em>-{{values.deletions}}</em>
+                {% endif %}
+    		</li>
+    		{% endfor %}
+    	</ul>
+    </div>

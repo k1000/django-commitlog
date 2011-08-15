@@ -1,0 +1,10 @@
+{% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
+
+{% block git_content %}
+<div class="error">
+	<h1>Error</h1>
+	<h2>{{ result_msg }}</h2>	
+</div>
+
+{% endblock %}
+

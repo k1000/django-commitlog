@@ -1,0 +1,23 @@
+{% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
+
+{% block git_content %}
+<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/admin.css" />
+<h2>GIT Repositories<h2>
+<ul class="repos">
+	{% for repo_name, repo in repos.items %}
+	<li><h3>{{ repo_name }}</h3>
+		<p>branches:</p>
+		<ul>
+			{% for branch in repo.branches %}
+			<li>
+				{{ branch.name }}
+				ref:"{{ branch.path }}"
+				<a href="{% url commitlog-branch repo_name branch.name %}">log</a> 
+			</li>
+			{% endfor %}
+		</ul>
+
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

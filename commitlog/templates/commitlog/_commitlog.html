@@ -1,12 +1,15 @@
 {% load commit_tags %}
 
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}commitlog/admin.css" />
-
-
-
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
-<h1><a href="{% url commitlog-branch repo_name branch_name %}">Commits at "{{ branch_name }}" branch </a></h1>
+<h1>
+    <a href="{% url commitlog-branch repo_name branch_name %}">
+        Commits at "{{ branch_name }}" branch 
+    </a>
+    {% if path %}
+        for "{{ path }}"
+    {% endif %}
+</h1>
 {% if commits %}
 <p class="pager">
     {% if previous_page %}
@@ -22,33 +25,9 @@
 {% for commits in commits_per_day %}
     <h3>{{ commits.grouper }}</h3>
     {% for commit in commits.list %}
-    <div class="commit">
-        <div class="human">
-            <storng>{{ commit.author }} (author) </storng>
-            <em>{{ commit.committed_date|mkdate|date:"H:i" }}</em>
-        </div>
-        <div class="message"> {{ commit.message }} </div>
-        <dl class="robot">
-            <dd>commit</dd><dt>{{ commit.hexsha|truncatechars:16 }} </dt>
-            {% for parent in commit.parents %}
-            <dd>parent</dd><dt>{{ parent.hexsha|truncatechars:16 }}</dt>
-            {% endfor %}
-        </dl>
-    	<ul>
-    		{% for file, values in commit.stats.files.items %}
-    		<li>
-    			<a href="{% url commitlog-edit-file repo_name branch_name file %}" >{{ file }}</a>
-                {% if values.insertions %}
-                    <em>+{{values.insertions}}</em>
-                {% endif %}
-                 
-                {% if values.deletions %}
-                    <em>-{{values.deletions}}</em>
-                {% endif %}
-    		</li>
-    		{% endfor %}
-    	</ul>
-    </div>
+    
+    {% include "commitlog/_commit.html" %}
+
     {% endfor %}
 {% endfor %}
 
@@ -60,4 +39,5 @@
     <a href="?page={{ next_page }}" class="next">NEXT</a>
 </p>
 {% endif %}
+
 </div>

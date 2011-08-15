@@ -1,19 +1,13 @@
 <link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.css" /> 
 <link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/theme_dark.css" />
 
-{% include "commitlog/_edit_file.html" %}
+<textarea id="id_file_source" cols="30" rows="10">{{ file_source }}</textarea>
 
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
 
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
-
-{# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/python-complete.js"></script> #}
-
-{% if file_meta.type == "css" or file_meta.type == "html"%}
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>	
-{% endif %}
 
 <script> 
 
@@ -27,7 +21,5 @@ var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), 
   }
 });
 var hlLine = editor.setLineClass(0, "activeline");
-{% if file_mime.type == "css" or file_mime.type == "html"%}
-zen_textarea.setup({pretty_break: true})
-{% endif %}
+
 </script> 

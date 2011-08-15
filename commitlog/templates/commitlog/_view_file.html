@@ -1,0 +1,13 @@
+<ul class="breadcrumbs">
+    <li><a href="{% url commitlog-tree-view repo_name branch_name "" %}" >/</a>
+{% for crumb, path in breadcrumbs %}
+    <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
+{% endfor %}
+</ul>
+{{ size }}
+
+<h1>File "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
+
+{{ commit }}
+{{ form.as_p }}
+
