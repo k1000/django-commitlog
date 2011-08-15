@@ -11,4 +11,6 @@ REPO_ITEMS_IN_PAGE = getattr(settings, "REPO_VIEW_IN_PAGE", 10)
 FILE_BLACK_LIST = getattr(settings,"FILE_BLACK_LIST", 
 	("settings.py",) 
 )
-GITTER_MEDIA_URL = getattr(settings,"GITTER_MEDIA_URL", settings.MEDIA_URL ) 
+GITTER_MEDIA_URL = getattr(settings,"GITTER_MEDIA_URL", settings.STATIC_URL )
+# limit editor height for large documets
+LIMIT_EDITOR_HEIGHT = getattr(settings,"LIMIT_EDITOR_HEIGHT", "300" ) 

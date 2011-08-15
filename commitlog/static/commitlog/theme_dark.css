@@ -27,6 +27,11 @@ div.CodeMirror {
 .cm-s-default span.cm-tag {color: #adcb92;}
 .cm-s-default span.cm-attribute {color: #e45e70;}
 .cm-s-default span.cm-null {color: #e9e7b1;}
+.cm-undefined {color: white;}
+.cm-minus {color: red;}
+.cm-plus {color:#D5FCB0;}
+.cm-rangeinfo {color: #FFFFB7; background: gray;}
+
 #activeline {
 	background: red;
 }

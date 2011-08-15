@@ -13,4 +13,10 @@ class FileEditForm(forms.Form):
 	
 	file_source = forms.FileField()
 	message = forms.CharField( widget=forms.Textarea )
+
+class FileDeleteForm(forms.Form):
+	"""docstring for FileEditForm"""
+	
+	path = forms.FileField( widget=forms.HiddenInput )
+	message = forms.CharField( widget=forms.Textarea )
 		
