@@ -1,20 +1,25 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
-{% block breadcrumbs %}
-<ul class="breadcrumbs">
-	<li>repo "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
-	<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" >{{ branch_name }}</a>" </li>
+
+{% block git_breadcrumbs %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
-	{% for crumb in dir_path %}
-	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb %}" >{{crumb}}/</a></li>
+	{% for crumb, path in breadcrumbs %}
+    <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
 	{% endfor %}
-</ul>
-{% endblock breadcrumbs %}
+{% endblock git_breadcrumbs %}
 
 
 
 {% block git_content %}
-	<a href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
+	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
+	<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
+
+	{{ size }}
+
+	{% if result_msg %}
+	<h3>{{ result_msg|safe }}</h3>
+	{% endif %}
+
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
 	  {% include "commitlog/_edit_text.html" %}
 	{% else %}

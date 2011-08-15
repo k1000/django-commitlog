@@ -43,3 +43,9 @@ ul {
 	list-style: none;
 	list-style-type: none;
 }
+.colM{
+	clear: both;
+}
+.history {
+	float: right;
+}
