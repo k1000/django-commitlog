@@ -12,7 +12,8 @@
 			<li>
 				{{ branch.name }}
 				ref:"{{ branch.path }}"
-				<a href="{% url commitlog-branch repo_name branch.name %}">log</a> 
+				<a href="{% url commitlog-tree-view repo_name branch.name %}">tree</a>
+				<a href="{% url commitlog-branch repo_name branch.name %}">log</a>
 			</li>
 			{% endfor %}
 		</ul>
