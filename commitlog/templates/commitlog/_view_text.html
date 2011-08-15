@@ -15,11 +15,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), 
   mode: {name: "{{ file_meta.type }}"},
   lineNumbers: true,
   indentUnit: 4,
-  onCursorActivity: function() {
-    editor.setLineClass(hlLine, null);
-    hlLine = editor.setLineClass(editor.getCursor().line, "activeline");
-  }
+  readOnly: true
 });
-var hlLine = editor.setLineClass(0, "activeline");
 
 </script> 
