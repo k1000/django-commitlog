@@ -1,9 +1,17 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
 {% block git_breadcrumbs %}
+	{% if commit %}
+	<li>commit: <a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.hexsha|truncatechars:16 }}/</a></li>
+	{% else %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
-	{% for crumb in dir_path %}
-	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb %}" >{{crumb}}/</a></li>
+	{% endif %}
+	{% for crumb in breadcrumbs %}
+	{% if commit %}
+	<li><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha crumb.1 %}" >{{crumb.0}}/</a> 	
+	{% else %}
+	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" >{{crumb}}/</a> 
+	{% endif %}
 	{% endfor %}
 {% endblock git_breadcrumbs %}
 
@@ -39,18 +47,22 @@
 			{% endif %}
 		{% endif %}
 		<small>{{ element.size|filesizeformat }}</small>
-		<small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small>
+		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
+		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename">rename</a>
 		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete">delete</a>
 	</li>
 {% endfor %}
 </ul>
 
-<form action="" method="post">
-	<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new/{{ dir_path|join:"/" }}" id="cur_path">
+<div class="tools">
+
+	<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
 	<label for="new_file_name">file name</label>
 	<input type="text" id="new_file_name"></input>
 	<button id="create_new_file" >CREATE FILE</button>
-</form>
+
+</div>
+
 {% endblock %}
 
 

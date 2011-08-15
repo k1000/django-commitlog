@@ -49,3 +49,9 @@ ul {
 .history {
 	float: right;
 }
+.tools {
+	float: right;
+}
+.breadcrumbs ul{
+	overflow: hidden;
+}
