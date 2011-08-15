@@ -12,6 +12,8 @@ MSG_COMMIT_SUCCESS = u"Commit has been executed. <br/>%s"
 MSG_NO_FILE = "File hasn't been found."
 MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
 MSG_CANT_VIEW = "Can't view file."
+MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
+MSG_RENAME_ERROR = "There been an error during renaming the file."
 
 def file_type_from_mime(mime):
     types = {
@@ -99,9 +101,7 @@ def error_view(request, msg, code=None):
     return TemplateResponse( 
             request, 
             'commitlog/error.html', 
-            {
-                "result_msg":msg,
-            })
+            { "msg":msg, })
 
 class NotAllowedToView(Exception):
     """You are not allowed to view/edit this file"""
@@ -153,7 +153,7 @@ def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None
         branch_name = branch,
         commit = commit,
         tree = tree.list_traverse(depth = 1),
-        breadcrumbs = make_crumbs(path),
+        breadcrumbs = None, #make_crumbs(path),
         dir_path = path.split("/"),
     )
 
@@ -210,7 +210,7 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
     result_msg = file_source = ""
 
     if path in FILE_BLACK_LIST:
-        msg = MSG_NO_FILE_IN_TREE
+        msg = MSG_NOT_ALLOWED
         return error_view( request, result_msg)
     
     if path[-1:] == "/":
@@ -330,7 +330,7 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
     file_source = ""
 
     if path in FILE_BLACK_LIST:
-        msg = MSG_NO_FILE_IN_TREE
+        msg = MSG_NOT_ALLOWED
         return error_view( request, msg)
     
     file_path = path #!!! FIX security
@@ -356,8 +356,7 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
     if mime[0] in ["text", "application"]:
         file_source = tree.data_stream[3].read
     else:
-        file_source = tree.abspath
-    
+        file_source = tree.abspath  
 
     file_meta = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
@@ -414,7 +413,31 @@ def upload_file(request, repo_name, branch_name, dir):
     pass
 
 def rename_file(request, repo_name, branch_name, path):
-    pass
+    msg = ""
+    repo = get_repo( repo_name )
+
+    if request.method == "post":
+        form = FileDeleteForm( request.POST )
+        if form.is_valid():
+            pass
+        else:
+            msg = MSG_RENAME_ERROR
+    else:
+        form = FileDeleteForm( )
+
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        breadcrumbs = make_crumbs(path),
+        form = form,
+        msg = msg,
+        repo_name = repo_name,
+        branch_name = branch,
+        path = path,
+    ) 
+    return TemplateResponse( 
+        request, 
+        'commitlog/rename_file.html', 
+        context)
 
 def repos_view(request):
     context = {

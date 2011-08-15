@@ -1,7 +1,5 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
-
-
 {% block git_breadcrumbs %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
 	{% for crumb in dir_path %}
@@ -10,7 +8,7 @@
 {% endblock git_breadcrumbs %}
 
 
-
 {% block git_content %}
+<h2>New file "{{ path }}"</h2>
 {% include "commitlog/_edit_text.html" %}
 {% endblock %}
