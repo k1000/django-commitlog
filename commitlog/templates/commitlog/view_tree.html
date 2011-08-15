@@ -1,16 +1,11 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
-
-{% block breadcrumbs %}
-<ul class="breadcrumbs">
-	<li>repo "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
-	<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" >{{ branch_name }}</a>" </li>
+{% block git_breadcrumbs %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
 	{% for crumb in dir_path %}
 	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb %}" >{{crumb}}/</a></li>
 	{% endfor %}
-</ul>
-{% endblock breadcrumbs %}
+{% endblock git_breadcrumbs %}
 
 
 
@@ -18,6 +13,8 @@
 {% if commit %}
 	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
 	{% include "commitlog/_commit.html" %}
+{% else %}
+	<h2>{{ dir_path|join:"/" }}/</h2>
 {% endif %}
 
 

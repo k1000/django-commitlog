@@ -7,17 +7,21 @@
 	{% for repo_name, repo in repos.items %}
 	<li><h3>{{ repo_name }}</h3>
 		<p>branches:</p>
-		<ul>
+		<ul class="branches">
 			{% for branch in repo.branches %}
 			<li>
-				{{ branch.name }}
-				ref:"{{ branch.path }}"
-				<a href="{% url commitlog-tree-view repo_name branch.name %}">tree</a>
-				<a href="{% url commitlog-branch repo_name branch.name %}">log</a>
-			</li>
+				<a href="{% url commitlog-tree-view repo_name branch.name "" %}">"{{ branch.name }}"</a>
+				(<a href="{% url commitlog-branch repo_name branch.name %}">log</a>)
+				{% if repo.tags %}
+				<p>Tags.</p>
+				<ul class="tags">
+					{% for tag in repo.tags %}
+					<li><a href="{% url commitlog-commit-tree-view repo_name branch.name tag "" %}">"{{ tag }}"</a></li>
+					{% endfor %}
+				</ul>					
+				{% endif %}
 			{% endfor %}
 		</ul>
-
 	</li>
 	{% endfor %}
 </ul>
