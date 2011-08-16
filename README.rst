@@ -1,14 +1,18 @@
 About
 -----
 
-*django-commitlog* - view GIT commit log.
+*django-commitlog* - git integrated online developement.
 Known to work in Django 1.3
 
 Features
 --------
 
-* View log of commits for given branch
-* Edits existing files with commit message
+* manage multimple GIT repositories
+* create/uplod/modify/delete files together with GIT commits
+* view commit history and its diffs for any file 
+* browse file tree in any point of the repo history
+* editor syntax highliting (thanx to CodeMirror 2)
+* editor zen-coding for .html nad .css files ( thanx to zen-texarea.js )
 
 
 Installation
