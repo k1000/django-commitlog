@@ -55,12 +55,16 @@
 </ul>
 
 <div class="tools">
-
+{% if not commit %}
 	<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
 	<label for="new_file_name">file name</label>
 	<input type="text" id="new_file_name"></input>
 	<button id="create_new_file" >CREATE FILE</button>
-
+	<form action="" method="post" enctype="multipart/form-data">
+		{{ upload_form.as_p }}
+		<p><button id="upload_file" type="sumbmit" >UPLOAD FILE</button></p>
+	</form>
+{% endif %}
 </div>
 
 {% endblock %}

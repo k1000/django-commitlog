@@ -2,6 +2,7 @@ import os
 import codecs
 from git import *
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.template.response import TemplateResponse
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
@@ -64,7 +65,7 @@ def make_crumbs( path ):
     #breadcrumbs.append( (bread[-1], "#") )
     return breadcrumbs
 
-def commit(repo, message, path ):
+def mk_commit(repo, message, path ):
     git = repo.git
     #index = repo.index 
     try:
@@ -183,7 +184,7 @@ def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
             write_file(file_path, file_source )
 
             message = form.cleaned_data["message"]
-            result_msg = commit(repo, message, file_path )
+            result_msg = mk_commit(repo, message, file_path )
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
@@ -257,7 +258,7 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
                 handle_uploaded_file(file_path, request.FILES['file_source'])
 
             message = form.cleaned_data["message"]
-            result_msg = commit(repo, message, file_path )
+            result_msg = mk_commit(repo, message, file_path )
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
@@ -289,10 +290,8 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 def delete_file(request, repo_name, branch, path):
     repo = get_repo( repo_name )
     tree = repo.tree()
-    if path[-1:] == "/":
-        path = path[:-1]
-    
-    tree = tree[path]
+        
+    ftree = tree[path] #check if exixs under the tree
 
     if request.method == "POST":
         form = FileDeleteForm(request.POST)
@@ -301,13 +300,14 @@ def delete_file(request, repo_name, branch, path):
                 os.remove(path)
             git = repo.git
             del_message = git.rm(path)
+            if path[-1:] == "/":
+                path = path[:-1]
     else:
         form = FileDeleteForm()
     
     context = dict(
         breadcrumbs = make_crumbs(path),
         form = form,
-        del_message = del_message,
         repo_name = repo_name,
         branch_name = branch,
         path = path,
