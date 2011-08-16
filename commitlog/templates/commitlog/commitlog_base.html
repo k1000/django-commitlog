@@ -12,7 +12,12 @@
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
 </div>
+
+{% if repo_name and branch_name %}
+	<a href="{% url commitlog-undo repo_name branch_name %}" class="undo button" title="undo last commit">undo</a>
+{% endif %}
 {% endblock breadcrumbs %}
+
 
 
 {% block content %}
