@@ -4,6 +4,7 @@ from git import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.response import TemplateResponse
+from django.shortcuts import redirect
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm
@@ -185,6 +186,10 @@ def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 
             message = form.cleaned_data["message"]
             result_msg = mk_commit(repo, message, file_path )
+            messages.success(request, result_msg ) 
+
+            dr_path = "/".join( path.split("/")[:-1] )
+            return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
@@ -300,6 +305,10 @@ def delete_file(request, repo_name, branch, path):
                 os.remove(path)
             git = repo.git
             del_message = git.rm(path)
+
+            message = form.cleaned_data["message"]
+            commit_result = git.commit("-m", """%s""" % message)
+            messages.success(request, commit_result ) 
             if path[-1:] == "/":
                 path = path[:-1]
     else:
