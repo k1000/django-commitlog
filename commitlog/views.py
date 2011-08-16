@@ -474,8 +474,12 @@ def repos_view(request):
         'commitlog/list_repos.html', 
         context)
 
-def undo_commit(request):
+def undo_commit(request, repo_name, branch_name):
     """
     undo last commit
     """
-    pass
+    repo = get_repo( repo_name )
+    git = repo.git
+    reset_result = git.reset( "--soft" "HEAD^" )
+    messages.success(request, reset_result ) 
+    return redirect('commitlog-commit-view', repo_name, branch_name  )
