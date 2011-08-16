@@ -148,12 +148,25 @@ def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None
         if path[-1:] == "/":
             path = path[:-1]
         tree = tree[path]
+    
+    if request.method == 'POST':
+        form = FileEditForm(request.POST, request.FILES)
+        if form.is_valid():
+            file_path = os.path.join( repo.working_dir, path, request.FILES["file_source"].name)
+            handle_uploaded_file(file_path, request.FILES['file_source'])
+
+            msg = form.cleaned_data["message"]
+            result_msg = mk_commit(repo, msg, file_path )
+            messages.success(request, result_msg )
+    else:
+        form = FileEditForm( initial={"message": "file uploaded"})
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
         commit = commit,
+        upload_form = form,
         tree = tree.list_traverse(depth = 1),
         breadcrumbs = None, #make_crumbs(path),
         dir_path = path.split("/"),
@@ -184,8 +197,8 @@ def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
             file_source = form.cleaned_data["file_source"]
             write_file(file_path, file_source )
 
-            message = form.cleaned_data["message"]
-            result_msg = mk_commit(repo, message, file_path )
+            msg = form.cleaned_data["message"]
+            result_msg = mk_commit(repo, msg, file_path )
             messages.success(request, result_msg ) 
 
             dr_path = "/".join( path.split("/")[:-1] )
@@ -295,8 +308,10 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 def delete_file(request, repo_name, branch, path):
     repo = get_repo( repo_name )
     tree = repo.tree()
-        
-    ftree = tree[path] #check if exixs under the tree
+    try:
+        ftree = tree[path] #check if exixs under the tree
+    except KeyError:
+        pass
 
     if request.method == "POST":
         form = FileDeleteForm(request.POST)
@@ -306,13 +321,17 @@ def delete_file(request, repo_name, branch, path):
             git = repo.git
             del_message = git.rm(path)
 
-            message = form.cleaned_data["message"]
-            commit_result = git.commit("-m", """%s""" % message)
+            msg = form.cleaned_data["message"]
+            commit_result = git.commit("-m", """%s""" % msg)
             messages.success(request, commit_result ) 
-            if path[-1:] == "/":
-                path = path[:-1]
+
+            dir_path = "/".join( path.split("/")[:-1] )
+            return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
     else:
-        form = FileDeleteForm()
+        form = FileDeleteForm(initial={
+            "message": "file %s deleted" % path,
+            "path": path,
+        })
     
     context = dict(
         breadcrumbs = make_crumbs(path),
@@ -418,8 +437,6 @@ def commit_view(request, repo_name, branch, commit_sha=None):
 def branches_view(request, repo_name):
     pass
 
-def upload_file(request, repo_name, branch_name, dir):
-    pass
 
 def rename_file(request, repo_name, branch_name, path):
     msg = ""
