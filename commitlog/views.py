@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
-from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm
+from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
@@ -150,16 +150,16 @@ def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None
         tree = tree[path]
     
     if request.method == 'POST':
-        form = FileEditForm(request.POST, request.FILES)
+        form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             file_path = os.path.join( repo.working_dir, path, request.FILES["file_source"].name)
             handle_uploaded_file(file_path, request.FILES['file_source'])
 
-            msg = form.cleaned_data["message"]
+            msg = "file %s uploaded" % file_path
             result_msg = mk_commit(repo, msg, file_path )
             messages.success(request, result_msg )
     else:
-        form = FileEditForm( initial={"message": "file uploaded"})
+        form = FileUploadForm( )
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
@@ -285,7 +285,10 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         else:
             file_source = file_meta["abspath"]
 
-        form = form_class( initial={"file_source":file_source} )
+        form = form_class( initial={
+            "file_source":file_source,
+            "message":"modified %s" % path
+        } )
 
     #import ipdb; ipdb.set_trace()
     context = dict(
@@ -381,17 +384,17 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
         return error_view( request, msg )
     
     mime = tree.mime_type.split("/")
-    if mime[0] in ["text", "application"]:
-        file_source = tree.data_stream[3].read
-    else:
-        file_source = tree.abspath  
-
+    
+    file_source = tree.data_stream[3].read()
+    
+    #import ipdb; ipdb.set_trace()
     file_meta = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         abspath = tree.abspath,
         mime = tree.mime_type,
         size = tree.size,
         tree = tree,
+        path = tree.abspath,
         mime_type = mime[0],
         type = file_type_from_mime(tree.mime_type),
     )
@@ -406,7 +409,10 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
         branch_name = branch,
         path = path,
     )
-        
+    if mime[0] == "image":
+        import base64
+        context["img_base"] = base64.b64encode( file_source )
+
     return TemplateResponse( 
         request, 
         'commitlog/view_file.html', 
