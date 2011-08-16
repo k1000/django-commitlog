@@ -32,8 +32,11 @@
 	  {% include "commitlog/_view_text.html" %}
 	{% else %}
 	  {% include "commitlog/_view_file.html" %}
-	  <img src="/{{ path }}" width="300" />
 	{% endif %}
 
+	{% if file_meta.mime_type == "image" %}
+		
+		<img src="data:{{ file_meta.mime }};base64,{{ img_base }}" width="300" />
+	{% endif %}
 	{% include "commitlog/_diff.html" %}
 {% endblock %}
