@@ -18,6 +18,7 @@
 
 
 {% block git_content %}
+<div>
 {% if commit %}
 	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
 	{% include "commitlog/_commit.html" %}
@@ -53,6 +54,8 @@
 	</li>
 {% endfor %}
 </ul>
+</div>
+
 
 <div class="tools">
 {% if not commit %}

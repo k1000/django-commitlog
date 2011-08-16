@@ -10,7 +10,7 @@ from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_REST
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
-MSG_COMMIT_SUCCESS = u"Commit has been executed. <br/>%s"
+MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
 MSG_NO_FILE = "File hasn't been found."
 MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
 MSG_CANT_VIEW = "Can't view file."
@@ -206,7 +206,7 @@ def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
-        form = form_class( )
+        form = form_class( initial={"message":"%s added" % path} )
     
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
@@ -355,7 +355,7 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
     """
     view file in the commit
     """
-    file_source = ""
+    file_source = diff = ""
 
     if path in FILE_BLACK_LIST:
         msg = MSG_NOT_ALLOWED
@@ -367,8 +367,8 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
     repo = get_repo( repo_name )
     commit, tree = get_commit_tree( repo, commit_sha )
 
-
-    diff = get_diff( repo, path, commit.parents[0].hexsha, commit.hexsha )
+    if commit.parents:
+        diff = get_diff( repo, path, commit.parents[0].hexsha, commit.hexsha )
 
     try:
         tree = tree[path]
