@@ -341,6 +341,7 @@ def delete_file(request, repo_name, branch, path):
         })
     
     context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         breadcrumbs = make_crumbs(path),
         form = form,
         repo_name = repo_name,
@@ -434,6 +435,7 @@ def commit_view(request, repo_name, branch, commit_sha=None):
         diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha,  )
 
     context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
         diff = diff,
