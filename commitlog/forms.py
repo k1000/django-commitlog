@@ -4,7 +4,7 @@ from django import forms
 
 class CommitMessageForm(forms.Form):
 	"""docstring for FileEditForm"""
-	message = forms.CharField( widget=forms.Textarea )
+	message = forms.CharField( widget=forms.Textarea, label="Commit Message" )
 
 class TextFileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""

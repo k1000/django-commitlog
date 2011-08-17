@@ -9,6 +9,7 @@ from django.template.defaultfilters import stringfilter
 
 from commitlog.settings import REPOS, REPO_BRANCH
 register = Library()
+from commitlog.gravatar import get_gravatar
 
 class LatestCommitsNode(Node):
     def __init__(self, num, varname):
@@ -49,3 +50,7 @@ def show_patch( diff ):
 @register.simple_tag
 def diff_parent( commit ):
     return commit.diff( commit.parents[0] )
+
+@register.simple_tag
+def gravatar( email ):
+    return get_gravatar( email )

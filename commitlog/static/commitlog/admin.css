@@ -3,6 +3,18 @@
 	width: 900px;
 	margin: 0 auto;
 }
+.gitter ul{
+	margin: 0;
+	padding: 0;
+}
+
+img.gravatar {
+	float: left;
+	background: white;
+	padding: 3px;
+	border: 1px solid #cdcdcd;
+	margin-right: 1em;
+}
 .commits {
 	color: #838b9c;
 }
@@ -10,10 +22,15 @@
     float: right;
 }
 .human{
+	
     float: left;
 }
 .human em{
+	clear: left;
     float: left;
+}
+.human strong{
+   clear: left;
 }
 .message {
 	float: left;
@@ -41,10 +58,16 @@ textarea{
 ul {
 	clear: both;
 }
+.breadcrumbs ul{
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
 .breadcrumbs li{
 	float: left;
 	list-style: none;
 	list-style-type: none;
+	margin-right: 1em;
 }
 .colM{
 	clear: both;
