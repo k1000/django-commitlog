@@ -1,5 +1,8 @@
 /* @override http://127.0.0.1:8000/media/commitlog/admin.css */
-
+.gitter {
+	width: 900px;
+	margin: 0 auto;
+}
 .commits {
 	color: #838b9c;
 }
@@ -54,4 +57,32 @@ ul {
 }
 .breadcrumbs ul{
 	overflow: hidden;
+}
+.undo {
+	float: right;
+}
+.list {
+	padding: 0;
+	margin: 0;
+	border: 1px solid #d2e6f7;
+}
+.list li {
+	margin: 0;
+	background: #faf9fb;
+	list-style: none;
+	list-style-type: none;
+	padding: .7em 2em .7em 3em;
+	border-bottom: 1px solid #efecf6;
+	font-family: Monaco,"Courier New","DejaVu Sans Mono", mono;
+	font-size: 100%;
+}
+.delete,
+.rename {
+	float: right;
+}
+li.blob{
+	background: #f8f8f8 url(/media/commitlog/images/file.png) no-repeat 10px;
+}
+li.tree{
+	background: #f8f8f8 url(/media/commitlog/images/directory.png) no-repeat 10px;
 }

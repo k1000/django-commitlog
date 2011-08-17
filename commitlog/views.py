@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
-from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm
+from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
@@ -15,7 +15,8 @@ MSG_NO_FILE = "File hasn't been found."
 MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
 MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
-MSG_RENAME_ERROR = "There been an error during renaming the file."
+MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
+MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
 
 def file_type_from_mime(mime):
     types = {
@@ -108,6 +109,8 @@ def error_view(request, msg, code=None):
 class NotAllowedToView(Exception):
     """You are not allowed to view/edit this file"""
 
+def get_commits(repo, branch, paths=[], page=0):
+    return repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
 
 def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
     page = int(request.GET.get("page", 0))
@@ -116,7 +119,8 @@ def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
         paths = [path]
     else:
         paths = []
-    commits = repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
+    
+    commits = get_commits(repo, branch, paths, page)
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
@@ -445,23 +449,41 @@ def branches_view(request, repo_name):
 
 
 def rename_file(request, repo_name, branch_name, path):
-    msg = ""
     repo = get_repo( repo_name )
 
+    tree = repo.tree()
+    try:
+        tree = tree[path]
+    except KeyError:
+        msg = MSG_NO_FILE_IN_TREE
+        return error_view( request, msg)
+
     if request.method == "post":
-        form = FileDeleteForm( request.POST )
+        form = RenameForm( request.POST )
         if form.is_valid():
-            pass
+            git = repo.git
+            new_name = form.cleaned_data["new_name"]
+            try:
+                os.rename(path, new_name)
+            except IOError:
+                msg = MSG_RENAME_ERROR % (path, new_name)
+                return error_view( request, msg)
+            else:
+                git.mv( path, new_name )
+                msg = MSG_RENAME_SUCCESS % (path, new_name)
+                commit_result = git.commit("-m", """%s""" % msg)
+                messages.success(request, commit_result ) 
+                dir_path = "/".join( path.split("/")[:-1] )
+                return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
         else:
             msg = MSG_RENAME_ERROR
     else:
-        form = FileDeleteForm( )
+        form = RenameForm( )
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         breadcrumbs = make_crumbs(path),
         form = form,
-        msg = msg,
         repo_name = repo_name,
         branch_name = branch,
         path = path,

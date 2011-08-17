@@ -9,6 +9,7 @@ class CommitMessageForm(forms.Form):
 class TextFileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""
 	file_source = forms.CharField( widget=forms.Textarea(attrs={'size':'60'}) )
+			
 
 class FileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""
@@ -21,4 +22,8 @@ class FileDeleteForm(CommitMessageForm):
 class FileUploadForm(forms.Form):
 	"""docstring for FileEditForm"""
 	file_source = forms.FileField( )
+
+class RenameForm(forms.Form):
+	"""docstring for FileEditForm"""
+	new_name = forms.CharField()
 		
