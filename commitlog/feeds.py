@@ -12,8 +12,8 @@ class RecentCommits(Feed):
     description = u"últimas entradas del Observatorio Tecnológico"
     language = settings.PAGE_DEFAULT_LANGUAGE
     
-    def items(self):
-        return published_under(1)[:NR_ITEMS]
+    def get_object(self, request, beat_id):
+        return get_object_or_404(Beat, pk=beat_id)    
 
     def item_title(self, item):
         return item.title()
@@ -24,3 +24,6 @@ class RecentCommits(Feed):
     def items(self, obj):
         repo = get_repo( repo_name )
         return get_commits(repo, branch)
+    
+    def get_title(self):
+        pass
