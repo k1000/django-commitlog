@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from django.shortcuts import redirect
+from django.http import Http404
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
 
@@ -84,7 +85,10 @@ def mk_commit(repo, message, path ):
     return result_msg
 
 def get_repo( repo_name ):
-    return Repo(REPOS[repo_name])
+    try:
+        return Repo(REPOS[repo_name])
+    except InvalidGitRepositoryError:
+        raise Http404
 
 def get_commit_tree( repo, commit_sha=None ):
     commit = None

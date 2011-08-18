@@ -2,7 +2,7 @@
 from django.conf import settings
 
 REPOS = getattr(settings, "REPOS", {
-	"local":"",
+	"local": settings.PROJECT_PATH,
 })
 
 REPO_BRANCH = getattr(settings, "REPO_BRANCH", "master")

@@ -28,11 +28,12 @@
 
 <div class="gitter">
 {% block git_content %}{% endblock git_content %}
-</div>
+</div> 
 
-{% block git_content %}{% endblock git_content %}
- 
-
-{% block js %}{% endblock js %}
+{% block js %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script src="http://http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script src="{{ GITTER_MEDIA_URL }}js/script.js"></script>
+{% endblock js %}
 
 {% endblock content %}

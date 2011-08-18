@@ -14,16 +14,14 @@
 	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
 	<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
 
-	{{ size }}
-
 	{% if result_msg %}
-	<h3>{{ result_msg|safe }}</h3>
+		<h3>{{ result_msg|safe }}</h3>
 	{% endif %}
 
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
-	  {% include "commitlog/_edit_text.html" %}
+	  	{% include "commitlog/_edit_text.html" %}
 	{% else %}
-	  {% include "commitlog/_edit_file.html" %}
-	  <img src="/{{ path }}" width="300" />
+		{% include "commitlog/_edit_file.html" %}
+	 	 <img src="/{{ path }}" width="300" />
 	{% endif %}
 {% endblock %}
