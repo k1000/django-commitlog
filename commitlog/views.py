@@ -572,13 +572,23 @@ def consol_view(request, repo_name):
     """
     result = ""
     query = ""
-    repo = get_repo( repo_name )
+    
     if request.method == 'POST':
-        query = request.POST.get("console-input", "")
+        query = request.POST.get("com", "")
         if query:
+            repo = get_repo( repo_name )
             git = repo.git
-            #http://book.git-scm.com/4_finding_with_git_grep.html
-            result = git.grep( "--name-only", query )
+            query_args = query.split(" ")
             
+            if not query_args[0] == u"git":
+                result = "command must begin with git"
+            else:
+                try:
+                    call = getattr( git, query_args[1] )
+                except GitCommandError:
+                    result = "command %s not implemented" %  query_args[1]
+                else:
+                    call_args = query_args[-1:]
+                    result = call( call_args )            
         
     return HttpResponse(result, mimetype='application/javascript')
