@@ -24,3 +24,7 @@ class FileUploadForm(forms.Form):
 class RenameForm(forms.Form):
 	"""docstring for FileEditForm"""
 	new_name = forms.CharField()
+
+class SearchForm(forms.Form):
+	"""docstring for FileEditForm"""
+	query = forms.CharField()

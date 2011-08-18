@@ -22,6 +22,9 @@
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
 	  	{% include "commitlog/_edit_text.html" %}
 	{% else %}
+		{% if file_meta.mime_type == "image" %}
+		<img src="/{{ path }}" width="300" />
+		{% endif %}
 		{% include "commitlog/_edit_file.html" %}
 	{% endif %}
 	</div>
