@@ -539,8 +539,12 @@ def search_view(request, repo_name, branch):
         if query:
             git = repo.git
             #http://book.git-scm.com/4_finding_with_git_grep.html
-            result = git.grep( "--name-only", query )
-            found_files = result.split("\n")
+            try:
+                result = git.grep( "--name-only", query )
+            except GitCommandError:
+                pass
+            else:
+                found_files = result.split("\n")
     else:
         form = SearchForm( request.POST )
     

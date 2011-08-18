@@ -212,3 +212,14 @@ li.tree{
 	margin-top: 1em;
 	padding-right: 1em;
 }
+
+.serch_form {
+	float: right;
+}
+.serch_form button{
+	margin: 0;
+	margin-left: 1em;
+}
+.serch_form input{
+	height:2em
+}

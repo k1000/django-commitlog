@@ -2,7 +2,7 @@
     <div class="commit">
         <div class="human">
             <img src="{% gravatar commit.author.email %}" alt="{{ commit.author }}" class="gravatar" />
-            <strong><a href="mail:{{commit.author.email}}">{{ commit.author }}</a> </strong>
+            <strong><a href="mailto:{{commit.author.email}}">{{ commit.author }}</a> </strong>
             <storng>{{ commit.author }} (author) </storng>
             <em>
                 {# {{ commit.committed_date|mkdate|date:"H:i" }} #}

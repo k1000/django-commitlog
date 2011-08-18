@@ -37,5 +37,8 @@
 	{% if file_meta.mime_type == "image" %}
 		<img src="data:{{ file_meta.mime }};base64,{{ img_base }}" width="300" />
 	{% endif %}
-	{% include "commitlog/_diff.html" %}
+	{% if diff %}
+		{% include "commitlog/_diff.html" %}
+	{% endif %}
+	
 {% endblock %}

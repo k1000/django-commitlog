@@ -6,6 +6,8 @@
 <ul class="repos">
 	{% for repo_name, repo in repos.items %}
 	<li><h3>{{ repo_name }}</h3>
+		<p>last commit {{ repo.head.commit.authored_date|mkdate }} "{{ repo.head.commit.message }}" [{{ repo.head.commit.author }}]</p>
+
 		<p>branches:</p>
 		<ul class="branches">
 			{% for branch in repo.branches %}
@@ -22,6 +24,12 @@
 				{% endif %}
 			{% endfor %}
 		</ul>
+
+		<p>is dirty: {{ repo.is_dirty }} </p>
+		<p>status: </p>
+		<pre>
+		{{ repo.git.status }}
+		</pre>
 	</li>
 	{% endfor %}
 </ul>
