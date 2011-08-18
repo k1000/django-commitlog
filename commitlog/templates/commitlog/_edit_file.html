@@ -1,7 +1,11 @@
-<form action="" method="post" enctype="multipart/form-data" >
-	<ul>
-	{{ form.as_p }}
-	</ul>
+<img src="/{{ path }}" width="300" />
+<form action="." method="post" enctype="multipart/form-data" >
+	<div>{{ form.file_source }}</div>
+	<div class="msg">
+		{{ form.message.label }}
+		{{ form.message }}
+		{{ form.message.errors }}
+	</div>
 	{% csrf_token %}
 	<p><button>COMMIT</button></p>
 </form>

@@ -19,18 +19,7 @@
 
 {% block git_content %}
 
-<div class="tools">
-{% if not commit %}
-	<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
-	<label for="new_file_name">file name</label>
-	<input type="text" id="new_file_name"></input>
-	<button id="create_new_file" >CREATE FILE</button>
-	<form action="" method="post" enctype="multipart/form-data">
-		{{ upload_form.as_p }}
-		<p><button id="upload_file" type="sumbmit" >UPLOAD FILE</button></p>
-	</form>
-{% endif %}
-</div>
+
 
 
 
@@ -41,8 +30,6 @@
 {% else %}
 	<h2>{{ dir_path|join:"/" }}/</h2>
 {% endif %}
-
-
 
 <ul class="tree list">
 {% if dir_path.0 %}
@@ -64,8 +51,9 @@
 			{% else %}
 			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" >{{ element.name }}</a>
 			{% endif %}
+			<small>{{ element.size|filesizeformat }}</small>
+
 		{% endif %}
-		<small>{{ element.size|filesizeformat }}</small>
 		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
 		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete">delete</a>
 		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename">rename</a>
@@ -74,6 +62,22 @@
 </ul>
 </div>
 
+<div class="tools">
+{% if not commit %}
+	<div id="new_file">
+		<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
+		<label for="new_file_name">file name</label>
+		<input type="text" id="new_file_name"></input>
+		<button id="create_new_file" >CREATE FILE</button>
+	</div>
+	<form action="." method="post" enctype="multipart/form-data" id="upload_file">
+		<p>
+			{{ upload_form.file_source }}
+			<button id="upload_file" type="sumbmit" >UPLOAD FILE</button>
+		</p>
+	</form>
+{% endif %}
+</div>
 
 {% endblock %}
 

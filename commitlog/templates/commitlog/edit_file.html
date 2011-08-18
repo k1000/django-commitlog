@@ -18,10 +18,12 @@
 		<h3>{{ result_msg|safe }}</h3>
 	{% endif %}
 
+	<div class="edit_file">
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
 	  	{% include "commitlog/_edit_text.html" %}
 	{% else %}
 		{% include "commitlog/_edit_file.html" %}
-	 	 <img src="/{{ path }}" width="300" />
 	{% endif %}
+	</div>
+
 {% endblock %}

@@ -10,7 +10,7 @@
 		<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" >{{ branch_name }}</a>" </li>	
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li><a href="{% url commitlog-commit-view repo_name branch_name "" %}" >commits</a> </li>	
+		<li><a href="{% url commitlog-branch repo_name branch_name %}" >commits</a> </li>	
 		{% endif %}
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
@@ -32,8 +32,8 @@
 
 {% block js %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<script src="http://http://documentcloud.github.com/underscore/underscore-min.js"></script>
-<script src="{{ GITTER_MEDIA_URL }}js/script.js"></script>
+<script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
 {% endblock js %}
 
 {% endblock content %}

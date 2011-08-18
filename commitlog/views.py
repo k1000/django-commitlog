@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 from django.http import Http404
 
-from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
+from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL, EDITABLE_MIME_TYPES
 
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm
 
@@ -83,6 +83,9 @@ def mk_commit(repo, message, path ):
     else:
         result_msg = MSG_COMMIT_SUCCESS % commit_result
     return result_msg
+
+def get_commit( repo, commit_sha ):
+    return list(repo.iter_commits( rev = commit_sha ))
 
 def get_repo( repo_name ):
     try:
@@ -272,7 +275,7 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         type = file_type_from_mime(tree.mime_type),
     )
 
-    if file_meta["mime_type"] in ["text", "application"]:
+    if file_meta["mime_type"] in EDITABLE_MIME_TYPES:
         form_class = TextFileEditForm
     else:
         form_class = FileEditForm
@@ -292,7 +295,7 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
-        if file_meta["mime_type"] in ["text", "application"]:
+        if file_meta["mime_type"] in EDITABLE_MIME_TYPES:
             file_source = tree.data_stream[3].read
         else:
             file_source = file_meta["abspath"]
@@ -437,7 +440,7 @@ def commit_view(request, repo_name, branch, commit_sha=None):
     """
     commit = diff = None
     repo = get_repo( repo_name )
-    commit_list = list(repo.iter_commits( rev = commit_sha ))
+    commit_list = get_commit( repo, commit_sha)
     if commit_list:
         commit = commit_list[0]
         diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha,  )
