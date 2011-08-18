@@ -566,24 +566,19 @@ def search_view(request, repo_name, branch):
         'commitlog/found_files.html', 
         context)
 
-def consol_view(request, repo_name, branch):
+def consol_view(request, repo_name):
     """
     serch files for string
     """
-    found_files = []
+    result = ""
     query = ""
     repo = get_repo( repo_name )
     if request.method == 'POST':
-        query = request.POST.get("query", "")
+        query = request.POST.get("console-input", "")
         if query:
             git = repo.git
             #http://book.git-scm.com/4_finding_with_git_grep.html
-            try:
-                result = git.grep( "--name-only", query )
-            except GitCommandError:
-                pass
-            else:
-                found_files = result.split("\n")
-
-
-    return HttpResponse("simplejson.dumps(response_dict)", mimetype='application/javascript')
+            result = git.grep( "--name-only", query )
+            
+        
+    return HttpResponse(result, mimetype='application/javascript')
