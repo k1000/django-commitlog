@@ -35,12 +35,32 @@
 
 <div class="gitter">
 {% block git_content %}{% endblock git_content %}
+
+	<div id="console">
+		<h4>Console</h4>
+
+		<div id="console_output">
+		</div>
+		<p>
+				<input id="console-input" type="text"  />
+				<button id="console_enter">ENTER</button>
+		</p>
+	</div>
 </div> 
+
 
 {% block js %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
 <script src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
+<script type="text/javascript">
+$("#console_enter").click(function( ){
+	var data = {"com":"git status"};
+	$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
+	  alert('Load was performed.');
+	});
+})
+</script>
 {% endblock js %}
 
 {% endblock content %}

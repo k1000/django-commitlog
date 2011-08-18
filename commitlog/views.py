@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from django.shortcuts import redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
+from django.utils import simplejson
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW
 from commitlog.settings import FILE_BLACK_LIST, GITTER_MEDIA_URL, EDITABLE_MIME_TYPES
@@ -462,27 +463,30 @@ def branches_view(request, repo_name):
     pass
 
 
-def rename_file(request, repo_name, branch, path):
-    repo = get_repo( repo_name )
+def rename_file(request, repo_name, branch, file_path):
 
-    tree = repo.tree()
-    try:
-        tree = tree[path]
-    except KeyError:
-        msg = MSG_NO_FILE_IN_TREE
-        return error_view( request, msg)
+    if request.method == 'POST':
+        repo = get_repo( repo_name )
+        tree = repo.tree()
+        try:
+            tree = tree[file_path]
+        except KeyError:
+            msg = MSG_NO_FILE_IN_TREE
+            return error_view( request, msg)
 
-    if request.method == "post":
         form = RenameForm( request.POST )
+        
         if form.is_valid():
+
             git = repo.git
             new_name = form.cleaned_data["new_name"]
             try:
-                os.rename(path, new_name)
+                os.rename(file_path, new_name)
             except IOError:
-                msg = MSG_RENAME_ERROR % (path, new_name)
+                msg = MSG_RENAME_ERROR % (file_path, new_name)
                 return error_view( request, msg)
             else:
+                
                 git.mv( path, new_name )
                 msg = MSG_RENAME_SUCCESS % (path, new_name)
                 commit_result = git.commit("-m", """%s""" % msg)
@@ -490,17 +494,17 @@ def rename_file(request, repo_name, branch, path):
                 dir_path = "/".join( path.split("/")[:-1] )
                 return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
         else:
-            msg = MSG_RENAME_ERROR
+            messages.error(request, MSG_RENAME_ERROR ) 
     else:
         form = RenameForm( )
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
-        breadcrumbs = make_crumbs(path),
+        breadcrumbs = make_crumbs(file_path),
         form = form,
         repo_name = repo_name,
         branch_name = branch,
-        path = path,
+        path = file_path,
     ) 
     return TemplateResponse( 
         request, 
@@ -561,3 +565,25 @@ def search_view(request, repo_name, branch):
         request, 
         'commitlog/found_files.html', 
         context)
+
+def consol_view(request, repo_name, branch):
+    """
+    serch files for string
+    """
+    found_files = []
+    query = ""
+    repo = get_repo( repo_name )
+    if request.method == 'POST':
+        query = request.POST.get("query", "")
+        if query:
+            git = repo.git
+            #http://book.git-scm.com/4_finding_with_git_grep.html
+            try:
+                result = git.grep( "--name-only", query )
+            except GitCommandError:
+                pass
+            else:
+                found_files = result.split("\n")
+
+
+    return HttpResponse("simplejson.dumps(response_dict)", mimetype='application/javascript')
