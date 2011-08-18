@@ -54,12 +54,14 @@
 <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
 <script src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
 <script type="text/javascript">
-$("#console_enter").click(function( ){
+{% if repo_name %}
+	$("#console_enter").click(function( ){
 	var data = {"com":"git status"};
 	$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
 	  
 	});
 })
+{% endif %}
 </script>
 
 
