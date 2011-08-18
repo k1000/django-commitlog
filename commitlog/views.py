@@ -462,7 +462,7 @@ def branches_view(request, repo_name):
     pass
 
 
-def rename_file(request, repo_name, branch_name, path):
+def rename_file(request, repo_name, branch, path):
     repo = get_repo( repo_name )
 
     tree = repo.tree()
