@@ -18,6 +18,7 @@
 
 
 {% block git_content %}
+
 <div class="tools">
 {% if not commit %}
 	<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
@@ -32,6 +33,7 @@
 </div>
 
 
+
 <div>
 {% if commit %}
 	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
@@ -41,12 +43,14 @@
 {% endif %}
 
 
+
 <ul class="tree list">
 {% if dir_path.0 %}
 	<li><a href="./">..</a>
 {% endif %}
 
 {% for element in tree %}
+
 	<li class="{{ element.type }}">
 		{% if element.type == "tree" %}
 			{% if commit %}
@@ -69,8 +73,6 @@
 {% endfor %}
 </ul>
 </div>
-
-
 
 
 {% endblock %}

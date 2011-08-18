@@ -7,7 +7,9 @@ from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 
 from commitlog.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW, FILE_BLACK_LIST, GITTER_MEDIA_URL
+
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm
+
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
@@ -17,6 +19,7 @@ MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
 MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
 MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
+
 
 def file_type_from_mime(mime):
     types = {
@@ -109,8 +112,10 @@ def error_view(request, msg, code=None):
 class NotAllowedToView(Exception):
     """You are not allowed to view/edit this file"""
 
+
 def get_commits(repo, branch, paths=[], page=0):
     return repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
+
 
 def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
     page = int(request.GET.get("page", 0))
@@ -121,7 +126,6 @@ def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
         paths = []
     
     commits = get_commits(repo, branch, paths, page)
-
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         repo_name = repo_name,

@@ -1,8 +1,12 @@
  {% load commit_tags %}
     <div class="commit">
         <div class="human">
+<<<<<<< HEAD
             <strong><a href="mail:{{commit.author.email}}">{{ commit.author }}</a> </strong>
             <img src="{% gravatar commit.author.email %}" alt="{{ commit.author }}" class="gravatar" />
+=======
+            <storng>{{ commit.author }} (author) </storng>
+>>>>>>> 51a71ccd1bc7183b9ab4ca685253c45d62846f73
             <em>
                 {# {{ commit.committed_date|mkdate|date:"H:i" }} #}
                  {{ commit.committed_date|mkdate|timesince }} ago

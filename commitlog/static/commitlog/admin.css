@@ -1,4 +1,5 @@
 /* @override http://127.0.0.1:8000/media/commitlog/admin.css */
+
 .gitter {
 	width: 900px;
 	margin: 0 auto;
@@ -15,6 +16,7 @@ img.gravatar {
 	border: 1px solid #cdcdcd;
 	margin-right: 1em;
 }
+
 .commits {
 	color: #838b9c;
 }
@@ -22,7 +24,6 @@ img.gravatar {
     float: right;
 }
 .human{
-	
     float: left;
 }
 .human em{
@@ -58,11 +59,13 @@ textarea{
 ul {
 	clear: both;
 }
+
 .breadcrumbs ul{
 	overflow: hidden;
 	padding: 0;
 	margin: 0;
 }
+
 .breadcrumbs li{
 	float: left;
 	list-style: none;
@@ -109,3 +112,4 @@ li.blob{
 li.tree{
 	background: #f8f8f8 url(/media/commitlog/images/directory.png) no-repeat 10px;
 }
+

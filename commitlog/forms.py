@@ -1,6 +1,5 @@
 from django import forms
 
-# place form definition here
 
 class CommitMessageForm(forms.Form):
 	"""docstring for FileEditForm"""
@@ -9,7 +8,6 @@ class CommitMessageForm(forms.Form):
 class TextFileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""
 	file_source = forms.CharField( widget=forms.Textarea(attrs={'size':'60'}) )
-			
 
 class FileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""
@@ -26,4 +24,3 @@ class FileUploadForm(forms.Form):
 class RenameForm(forms.Form):
 	"""docstring for FileEditForm"""
 	new_name = forms.CharField()
-		
