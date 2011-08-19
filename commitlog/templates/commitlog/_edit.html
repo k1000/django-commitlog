@@ -1,15 +1,15 @@
 {% load commit_tags %}
+<div id="edit_{{repo_name}}_{{branch_name}}_{{ path|slugify }}">
 
-	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
-	{% for crumb, path in breadcrumbs %}
-    <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
-	{% endfor %}
-
-
-
+	<ul class="breadcrumbs">
+		<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >root/</a> </li>
+		{% for crumb, path in breadcrumbs %}
+	    <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" class="ajax" rel="#tree" >{{crumb}}/</a> </li>
+		{% endfor %}
+	</ul>
 
 	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
-	<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
+	<h1>"{{path}}"</h1>
 
 	{% if result_msg %}
 		<h3>{{ result_msg|safe }}</h3>
@@ -25,4 +25,5 @@
 		{% include "commitlog/_edit_file.html" %}
 	{% endif %}
 	</div>
+</div>
 

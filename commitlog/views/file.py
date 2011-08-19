@@ -11,6 +11,15 @@ from commitlog.settings import FILE_BLACK_LIST, GITTER_MEDIA_URL, EDITABLE_MIME_
 
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm, SearchForm
 
+MSG_COMMIT_ERROR = "There were problems with making commit"
+MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
+MSG_NO_FILE = "File hasn't been found."
+MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
+MSG_CANT_VIEW = "Can't view file."
+MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
+MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
+MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
+
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
     result_msg = file_source = ""
