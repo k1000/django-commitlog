@@ -10,7 +10,7 @@ from django.template.defaultfilters import stringfilter
 from commitlog.settings import REPOS, REPO_BRANCH
 register = Library()
 from commitlog.gravatar import get_gravatar
-from commitlog.views import get_commit
+from commitlog.views._git_helpers import get_commit
 
 class LatestCommitsNode(Node):
     def __init__(self, num, varname):
