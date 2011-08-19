@@ -1,7 +1,7 @@
 
 from django.contrib.auth.decorators import login_required
 
-from _view_helpers import mix_response
+from _view_helpers import mix_response, make_crumbs
 from _git_helpers import get_repo, get_commit_tree
 
 from commitlog.forms import FileUploadForm
@@ -37,7 +37,7 @@ def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None
         commit = commit,
         upload_form = form,
         tree = tree.list_traverse(depth = 1),
-        breadcrumbs = None, #make_crumbs(path),
+        breadcrumbs = make_crumbs(path),
         dir_path = path.split("/"),
     )
 

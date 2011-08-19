@@ -1,21 +1,22 @@
 {% load commit_tags %}
+<div class="tree" id="tree_{{repo_name}}_{{branch_name}}" >
 {% if commit %}
 	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
 	{% include "commitlog/_commit.html" %}
 {% else %}
-	<h2>{{ dir_path|join:"/" }}/</h2>
 	<ul class="breadcrumbs">
 	{% for crumb in breadcrumbs %}
 	{% if commit %}
 	<li><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>	
 	{% else %}
-	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#tree" >{{crumb}}/</a> </li>
+	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>
 	{% endif %}
 	{% endfor %}
+	<li>{{ dir_path|last }}/</li>
 	</ul>
 {% endif %}
 
-<ul class="tree list">
+<ul class="list">
 {% if dir_path.0 %}
 	<li><a href="./" class="ajax" rel="#main" >..</a>
 {% endif %}
@@ -44,3 +45,4 @@
 	</li>
 {% endfor %}
 </ul>
+</div>
