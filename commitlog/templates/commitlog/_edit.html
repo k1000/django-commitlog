@@ -1,16 +1,13 @@
-{% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
+{% load commit_tags %}
 
-
-{% block git_breadcrumbs %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
 	{% for crumb, path in breadcrumbs %}
     <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
 	{% endfor %}
-{% endblock git_breadcrumbs %}
 
 
 
-{% block git_content %}
+
 	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
 	<h1>Commit to "{{path}}" at branch "<a href="{% url commitlog-branch repo_name branch_name %}">{{ branch_name }}</a>"</h1>
 
@@ -29,4 +26,3 @@
 	{% endif %}
 	</div>
 
-{% endblock %}

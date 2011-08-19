@@ -1,10 +1,31 @@
+from django.utils import simplejson
 from django.template.response import TemplateResponse
+from django.template.loader import render_to_string, get_template
+from django.http import  HttpResponse
 
-def mix_response(request, template_name, context):
-	return TemplateResponse( 
-        request, 
-        template_name, 
-        context)
+from commitlog.settings import PARTIAL_PREFIX
+
+def mix_response(request, template_name, context, partial_prefix = "_"):
+
+    if request.is_ajax():
+        tmpl_dir = template_name.split("/")
+        
+        partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
+        try:
+            rendered = render_to_string( partial_template_path, context)
+        except TemplateDoesNotExist:
+            return TemplateResponse( 
+                request, 
+                template_name, 
+                context)
+        else:
+            return HttpResponse(rendered, mimetype='application/javascript')
+
+    else:
+    	return TemplateResponse( 
+            request, 
+            template_name, 
+            context)
 
 def error_view(request, msg, code=None):
     return TemplateResponse( 

@@ -1,0 +1,15 @@
+{% if repo_name and branch_name %}
+	$("#console_enter").click(function( ){
+	var data = {"com":"git status"};
+	$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
+	  
+	});
+})
+{% endif %}
+
+
+
+
+{% if repo_name %}
+		<li>project "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
+		{% endif %}

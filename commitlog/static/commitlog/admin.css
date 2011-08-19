@@ -137,6 +137,21 @@ ul {
 	clear: both;
 }
 
+/* ---------- LAYOUT -------------- */
+#tree {
+	float: left;
+	width: 200px;
+}
+#main {
+	float: left;
+}
+
+#console {
+	clear: both;
+}
+
+
+/* ---------- LAYOUT -------------- */
 .breadcrumbs ul{
 	overflow: hidden;
 	padding: 0;
@@ -192,8 +207,10 @@ ul {
 	padding: .7em 2em .7em 3em;
 	border-bottom: 1px solid #efecf6;
 	font-family: Monaco,"Courier New","DejaVu Sans Mono", mono;
-	font-size: 100%;
+	font-size: 90%;
 }
+
+/* ---------- TREE -------------- */
 .delete,
 .rename {
 	float: right;
@@ -204,7 +221,11 @@ li.blob{
 li.tree{
 	background: #f8f8f8 url(/media/commitlog/images/directory.png) no-repeat 10px;
 }
+#tree .rename {
+	display: none;
+}
 
+/* ---------- EDIT -------------- */
 .edit_file button {
 	float: right;
 }
@@ -212,7 +233,7 @@ li.tree{
 	margin-top: 1em;
 	padding-right: 1em;
 }
-
+/* ---------- SEARCH -------------- */
 .serch_form {
 	float: right;
 }
@@ -222,4 +243,8 @@ li.tree{
 }
 .serch_form input{
 	height:2em
+}
+/* ---------- SEARCH -------------- */
+.CodeMirror {
+	/* width: 54em; */
 }

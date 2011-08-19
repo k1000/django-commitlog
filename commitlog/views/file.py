@@ -12,7 +12,7 @@ from commitlog.settings import FILE_BLACK_LIST, GITTER_MEDIA_URL, EDITABLE_MIME_
 from commitlog.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm, SearchForm
 
 @login_required
-def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
+def new(request, repo_name, branch=REPO_BRANCH, path=None ):
     result_msg = file_source = ""
     form_class = TextFileEditForm
 
@@ -59,7 +59,7 @@ def new_file(request, repo_name, branch=REPO_BRANCH, path=None ):
 
 
 @login_required
-def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
+def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
 
     result_msg = file_source = ""
 
@@ -140,10 +140,10 @@ def edit_file(request, repo_name, branch=REPO_BRANCH, path=None ):
         
     return mix_response( 
         request, 
-        'commitlog/edit_file.html', 
+        'commitlog/edit.html', 
         context)
 
-def view_file(request, repo_name, branch, path, commit_sha=None,):
+def view(request, repo_name, branch, path, commit_sha=None,):
     """
     view file in the commit
     """
@@ -207,7 +207,7 @@ def view_file(request, repo_name, branch, path, commit_sha=None,):
         'commitlog/view_file.html', 
         context)
 
-def delete_file(request, repo_name, branch, path):
+def delete(request, repo_name, branch, path):
     repo = get_repo( repo_name )
     tree = repo.tree()
     try:
@@ -248,7 +248,7 @@ def delete_file(request, repo_name, branch, path):
         'commitlog/delete_file.html', 
         context)
 
-def rename_file(request, repo_name, branch, file_path):
+def rename(request, repo_name, branch, file_path):
 
     if request.method == 'POST':
         repo = get_repo( repo_name )

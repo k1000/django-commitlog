@@ -6,88 +6,11 @@
 	{% else %}
 	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
 	{% endif %}
-	{% for crumb in breadcrumbs %}
-	{% if commit %}
-	<li><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha crumb.1 %}" >{{crumb.0}}/</a> 	
-	{% else %}
-	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" >{{crumb}}/</a> 
-	{% endif %}
-	{% endfor %}
 {% endblock git_breadcrumbs %}
 
 
 
 {% block git_content %}
-
-
-
-
-
-<div>
-{% if commit %}
-	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
-	{% include "commitlog/_commit.html" %}
-{% else %}
-	<h2>{{ dir_path|join:"/" }}/</h2>
-{% endif %}
-
-<ul class="tree list">
-{% if dir_path.0 %}
-	<li><a href="./">..</a>
-{% endif %}
-
-{% for element in tree %}
-
-	<li class="{{ element.type }}">
-		{% if element.type == "tree" %}
-			{% if commit %}
-			<a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha element.path %}" >{{ element.name }}/</a>
-			{% else %}
-			<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" >{{ element.name }}/</a>
-			{% endif %}
-		{% else %}
-			{% if commit %}
-			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha element.path %}" >{{ element.name }}</a>
-			{% else %}
-			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" >{{ element.name }}</a>
-			{% endif %}
-			<small>{{ element.size|filesizeformat }}</small>
-
-		{% endif %}
-		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
-		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete">delete</a>
-		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename">rename</a>
-	</li>
-{% endfor %}
-</ul>
-</div>
-
-<div class="tools">
-{% if not commit %}
-	<div id="new_file">
-		<input type="hidden" value="/admin/git/{{ repo_name }}/{{ branch_name }}/new{{ dir_path|join:"/" }}" id="cur_path">
-		<label for="new_file_name">file name</label>
-		<input type="text" id="new_file_name"></input>
-		<button id="create_new_file" >CREATE FILE</button>
-	</div>
-	<form action="." method="post" enctype="multipart/form-data" id="upload_file">
-		<p>
-			{{ upload_form.file_source }}
-			<button id="upload_file" type="sumbmit" >UPLOAD FILE</button>
-		</p>
-	</form>
-{% endif %}
-</div>
-
+{% include "commitlog/_view_tree.html" %}
 {% endblock %}
 
-
-{% block js %}
-<script type="text/javascript">
-	document.getElementById("create_new_file").onclick = function(){
-		var loc = document.getElementById("cur_path").value + "/" +
-			document.getElementById("new_file_name").value;
-		document.location = loc;
-	}
-</script>	
-{% endblock js %}

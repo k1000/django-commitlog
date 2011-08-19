@@ -5,19 +5,19 @@ urlpatterns = patterns('',
     
 
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/edit/(?P<path>[a-zA-Z0-9\-_\.\/]+)$',
-		"commitlog.views.file.edit_file", name='commitlog-edit-file'),
+		"commitlog.views.file.edit", name='commitlog-edit-file'),
 
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new/(?P<path>[a-zA-Z0-9\-_\.\/]+)$', 
-		"commitlog.views.file.new_file", name='commitlog-new-file'),
+		"commitlog.views.file.new", name='commitlog-new-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/delete/(?P<path>[a-zA-Z0-9\-_\.\/\\]+)$', 
-        "commitlog.views.file.delete_file", name='commitlog-delete-file'),
+        "commitlog.views.file.delete", name='commitlog-delete-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/rename/(?P<file_path>[a-zA-Z0-9\-_\.\/\\]+)$', 
-        "commitlog.views.file.rename_file", name='commitlog-rename-file'),
+        "commitlog.views.file.rename", name='commitlog-rename-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/(?P<commit_sha>[a-z0-9\-_]+)/view/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
-        "commitlog.views.file.view_file", name='commitlog-view-file'),
+        "commitlog.views.file.view", name='commitlog-view-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/tree/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
     	"commitlog.views.tree.tree_view", name='commitlog-tree-view'),
