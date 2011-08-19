@@ -7,6 +7,7 @@
 
 
 {% block git_content %}
+<div class="page">
 {% if commit %}
 	<h2>Commit {{ commit.hexsha|truncatechars:16 }}</h2>
 	{% include "commitlog/_commit.html" %}
@@ -15,5 +16,5 @@
 {% else %}
 	<h2>No commit found</h2>
 {% endif %}
-
+</div>
 {% endblock %}

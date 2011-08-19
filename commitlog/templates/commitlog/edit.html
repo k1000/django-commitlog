@@ -1,18 +1,16 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
-{% block git_breadcrumbs %}
-	{% if commit %}
-	<li>commit: <a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.hexsha|truncatechars:16 }}/</a></li>
-	{% else %}
-	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
-	{% endif %}
-{% endblock git_breadcrumbs %}
 
+{% block git_breadcrumbs %}
+	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
+	{% for crumb, path in breadcrumbs %}
+    <li><a href="{% url commitlog-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
+	{% endfor %}
+{% endblock git_breadcrumbs %}
 
 
 {% block git_content %}
 <div class="page">
-{% include "commitlog/_view_tree.html" %}
+	{% include "commitlog/_edit.html" %}
 </div>
 {% endblock %}
-

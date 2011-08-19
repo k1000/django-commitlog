@@ -1,0 +1,13 @@
+{% extends "commitlog/commitlog_base.html" %} {% load commit_tags %}
+
+
+{% block git_content %}
+	<h2>Rename "{{ path }}" </h2>
+	<form action="." method="post" >
+		<p>{{ form.new_name.label }}
+		{{ form.new_name }}
+		{{ form.new_name.errors }}
+		<button>Rename</button>
+		{% csrf_token %}</p>
+	</form>
+{% endblock %}

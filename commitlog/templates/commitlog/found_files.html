@@ -1,0 +1,13 @@
+{% extends "commitlog/commitlog_base.html" %} {% load commit_tags %}
+
+
+{% block git_content %}
+<div class="page">
+	<h2>Query "{{ query }}" found in {{ found_files|length }} files. </h2>
+	<ul class="list">
+	{% for file_name in found_files %}
+		<li><a href="{% url commitlog-edit-file repo_name branch_name file_name %}">{{ file_name }}</a></li>
+	{% endfor %}
+	</ul>
+</div>
+{% endblock %}

@@ -18,6 +18,7 @@
 
 
 {% block git_content %}
+<div class="page">
 	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
 	<h2>
 		File "{{ path }}" 
@@ -40,5 +41,5 @@
 	{% if diff %}
 		{% include "commitlog/_diff.html" %}
 	{% endif %}
-	
+</div>
 {% endblock %}

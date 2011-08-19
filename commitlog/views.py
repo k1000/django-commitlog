@@ -570,6 +570,7 @@ def consol_view(request, repo_name):
     """
     serch files for string
     """
+    import cgi
     result = ""
     query = ""
     
@@ -585,10 +586,10 @@ def consol_view(request, repo_name):
             else:
                 try:
                     call = getattr( git, query_args[1] )
+                    call_args = query_args[-1:]
+                    result = call( call_args )
                 except GitCommandError:
                     result = "command %s not implemented" %  query_args[1]
-                else:
-                    call_args = query_args[-1:]
-                    result = call( call_args )            
+                            
         
-    return HttpResponse(result, mimetype='application/javascript')
+    return HttpResponse(cgi.escape(result), mimetype='application/javascript')

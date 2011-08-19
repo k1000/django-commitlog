@@ -1,7 +1,7 @@
 {% extends "commitlog/commitlog_base.html" %}{% load commit_tags %}
 
 {% block git_content %}
-<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/admin.css" />
+<div class="page">
 <h2>GIT Repositories<h2>
 <ul class="repos">
 	{% for repo_name, repo in repos.items %}
@@ -33,4 +33,5 @@
 	</li>
 	{% endfor %}
 </ul>
+</page>
 {% endblock %}

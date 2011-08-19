@@ -1,24 +1,16 @@
-<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.css" /> 
-<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/theme_dark.css" />
-
 {% include "commitlog/_edit_file.html" %}
 
-
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
-
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
-
 {# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/python-complete.js"></script> #}
+{% if file_meta %}
+	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
+{% endif %}
 
 {% if file_meta.type == "css" or file_meta.type == "html"%}
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>	
 {% endif %}
 
-<script> 
-
-var editor = CodeMirror.fromTextArea(document.getElementById("id_file_source"), {
+<script type="text/javascript"> 
+var editor = CodeMirror.fromTextArea(  $("#edit_{{repo_name}}_{{branch_name}}_{{ path|slugify  }} #id_file_source")[0], {
   mode: {name: "{{ file_meta.type }}"},
   lineNumbers: true,
   indentUnit: 4,

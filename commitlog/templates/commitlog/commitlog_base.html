@@ -7,10 +7,10 @@
 		<li>project "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
 		{% endif %}
 		{% if branch_name %}
-		<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" >{{ branch_name }}</a>" </li>	
+		<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="main" >{{ branch_name }}</a>" </li>	
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li><a href="{% url commitlog-branch repo_name branch_name %}" >commits</a> </li>
+		<li><a href="{% url commitlog-branch repo_name branch_name %}" class="ajax" rel="main" >commits</a> </li>
 		<form method="post" action="{% url commitlog-search repo_name branch_name %}" class="serch_form">
 			<p>
 				<input type="text" name="query" id="id_query" value="{{ query }}" /> 
@@ -31,11 +31,23 @@
 
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/admin.css" />
+<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.css" /> 
+<link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/css/theme_dark.css" />
 
 <div class="gitter">
-{% block git_content %}{% endblock git_content %}
+	<p><a href="#" id="toogle_files">Files:</a></p>
+	<div id="tree">
+{% block git_tree %}{% endblock git_tree %}
+	</div>
 
+	<div id="main">
+{% block git_content %}{% endblock git_content %}
+	</div>
+
+	<div id="toolbox">
+	</div>
+	
 	<div id="console">
 		<h4>Console</h4>
 
@@ -50,27 +62,86 @@
 </div> 
 
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<script src="//documentcloud.github.com/underscore/underscore-min.js"></script>
-<script src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
-<script type="text/javascript">
-{% if repo_name %}
-	$("#console_enter").click(function( ){
-		var query_str = $("#console-input").val();
-		var output = $("#console_output");
-		output.append("<div>" + query_str + "</div>" );
-		$.post("{% url commitlog-consol repo_name %}", {"com": query_str }, function(data) {
-			console.log( data );
-			alert( data )
-			//output.append("<pre>" + data + "</pre>" );
-		}).success(function() { alert("second success"); })
-    	.error(function(data) { 
-    		console.log( data )
-	    	output.append("<pre>" + data.responseText + "</pre>" );
-    	})	
-	})
-{% endif %}
-</script>
 
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="//https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
+<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
+<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
+<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
+
+
+<script type="text/javascript">
+var current_main_page = document.location.href;
+var pages_in_main = {};
+var page_id = mk_page_id(current_main_page);
+$(".page").attr( "id", page_id);
+pages_in_main[current_main_page] = page_id;
+
+function mk_page_id( url ){
+	return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
+}
+
+$(document).ready( function(){
+
+{% if repo_name and branch_name %}
+	$("#console_enter").click(function( ){
+		var data = {"com":"git status"};
+		$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
+		  
+		});
+	})
+	var tree_path =  {% if path %} '{% url commitlog-tree-view repo_name branch_name path %}';
+	{% else %} '{% url commitlog-tree-view repo_name branch_name "" %}'; {% endif %}
+	$("#tree").load(tree_path, function() {
+		  console.log("#file_tree loaded")
+	});
+{% endif %}
+
+	$("#create_new_file").click( function(){
+		var loc = document.getElementById("cur_path").value + "/" +
+			document.getElementById("new_file_name").value;
+		document.location = loc;
+	})
+
+	$('#content').delegate('a.ajax', 'click', function(event) {
+		event.preventDefault();
+		var self = this
+		if (this.rel == "#main") {
+
+			if ( this.href != current_main_page) {
+				// if page is already loaded
+				$( "#" + pages_in_main[current_main_page]  ).toggle("slow");
+				if ( pages_in_main[this.href] ){
+					$( "#" + pages_in_main[this.href] ).show();
+					current_main_page = this.href;
+				} else { // new page
+					$.get(this.href, function(data) {
+						var id = mk_page_id(self.href)
+						pages_in_main[self.href] = id;
+					  	$(self.rel).append("<div class='page' id='" + id + "' >" + data + "</div>")
+						//	.show("slide", { direction: "left" }, 1000); 
+					  	current_main_page = self.href;
+					}, "html")
+				}				
+			}
+		}else {
+			$(this.rel).load(this.href, function() {
+		  		console.log(this.href)
+			});
+		}
+	});
+
+	$("#toogle_files").click( function(){
+		//$(this).remove_class("open").new_class("closed");
+
+		$('#tree').toggle("fast");
+	})
+		
+})
+
+</script>
+{% block js %}{% endblock js %}
 
 {% endblock content %}
