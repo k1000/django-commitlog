@@ -5,6 +5,7 @@
 	{% include "commitlog/_commit.html" %}
 {% else %}
 	<ul class="breadcrumbs">
+	<li><a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >//</a> </li>
 	{% for crumb in breadcrumbs %}
 	{% if commit %}
 	<li><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>	
