@@ -66,6 +66,7 @@
 
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="//https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
 <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
@@ -74,6 +75,9 @@
 
 
 <script type="text/javascript">
+var pages_in_main = {}
+var current_main_page = "";
+
 $(document).ready( function(){
 
 {% if repo_name and branch_name %}
@@ -100,8 +104,7 @@ $(document).ready( function(){
 		document.location = loc;
 	})
 
-	var pages_in_main = {}
-	var current_main_page = $(".page").attr("id");
+	
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
 		var self = this
@@ -114,7 +117,8 @@ $(document).ready( function(){
 				$.get(this.href, function(data) {
 					var id = self.href.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "");
 					pages_in_main[self.href] = id;
-				  	$(self.rel).append("<div class='page' id='" + id + "' >" + data + "</div>");
+				  	$(self.rel).append("<div class='page' id='" + id + "' >" + data + "</div>")
+						.show("slide", { direction: "left" }, 1000); 
 				  	$( "#" + pages_in_main[current_main_page] ).hide();
 				  	current_main_page = self.href;
 				}, "html")

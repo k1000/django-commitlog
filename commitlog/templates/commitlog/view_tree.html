@@ -11,6 +11,8 @@
 
 
 {% block git_content %}
+<div class="page" id="view_{{repo_name}}_{{branch_name}}_{{path}}">
 {% include "commitlog/_view_tree.html" %}
+</div>
 {% endblock %}
 
