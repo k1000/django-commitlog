@@ -1,0 +1,50 @@
+/* @override http://127.0.0.1:8000/media/commitlog/theme_dark.css */
+
+div.CodeMirror {
+	background: #201724;
+	color: #fcd6d3;
+	font: 1em/1.3em "Andale Mono", "Courier New", Courier, mono;
+}
+.CodeMirror-cursor{
+	color: white;
+}
+.cm-s-default span.cm-keyword {color: #e3a2ba;}
+.cm-s-default span.cm-atom {color: #d3e8e1;}
+.cm-s-default span.cm-number {color: #7bcbc5;}
+.cm-s-default span.cm-def {color: #00f;}
+.cm-s-default span.cm-variable {color: #e5cf9f;}
+.cm-s-default span.cm-variable-2 {color: #05a;}
+.cm-s-default span.cm-variable-3 {color: #0a5;}
+.cm-s-default span.cm-property {color: black;}
+.cm-s-default span.cm-operator {color: #979797;}
+.cm-s-default span.cm-comment {color: #848b8c;}
+.cm-s-default span.cm-string {color: #e07846;}
+.cm-s-default span.cm-meta {color: #555;}
+.cm-s-default span.cm-error {color: #f00;}
+.cm-s-default span.cm-qualifier {color: #555;}
+.cm-s-default span.cm-builtin {color: #9ce1df;}
+.cm-s-default span.cm-bracket {color: #cc7;}
+.cm-s-default span.cm-tag {color: #adcb92;}
+.cm-s-default span.cm-attribute {color: #e45e70;}
+.cm-s-default span.cm-null {color: #e9e7b1;}
+.cm-undefined {color: white;}
+.cm-minus {color: red;}
+.cm-plus {color:#D5FCB0;}
+.cm-rangeinfo {color: #FFFFB7; background: #444;}
+
+#activeline {
+	background: red;
+}
+.CodeMirror {
+    border: 1px solid #eee;
+    color: white;
+}
+.CodeMirror-scroll {
+	height: auto;
+	overflow-y: hidden;
+	overflow-x: auto;
+}
+pre.CodeMirror-cursor !important{
+	color: white;
+	background: white;
+}
