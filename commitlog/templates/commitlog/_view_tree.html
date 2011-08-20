@@ -41,8 +41,8 @@
 
 		{% endif %}
 		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
-		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete" rel="#toolbox" >delete</a>
-		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename" rel="#toolbox" >rename</a>
+		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" >delete</a>
+		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="#toolbox" >rename</a>
 	</li>
 {% endfor %}
 </ul>

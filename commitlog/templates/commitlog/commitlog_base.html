@@ -11,20 +11,20 @@
 		{% endif %}
 		{% if repo_name and branch_name %}
 		<li><a class="ajax" rel="main" href="{% url commitlog-branch repo_name branch_name %}"  >commits</a> </li>
-		<form method="post" action="{% url commitlog-search repo_name branch_name %}" class="serch_form">
-			<p>
-				<input type="text" name="query" id="id_query" value="{{ query }}" /> 
-				<button>SEARCH</button>
-				{% csrf_token %}
-			</p>
-		</form>
 		{% endif %}
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
 </div>
 
 {% if repo_name and branch_name %}
-	<a href="{% url commitlog-undo repo_name branch_name %}" class="undo button" title="undo last commit">undo</a>
+<form method="post" action="{% url commitlog-search repo_name branch_name %}" class="serch_form">
+	<p>
+		<input type="text" name="query" id="id_query" value="{{ query }}" /> 
+		<button>SEARCH</button>
+		{% csrf_token %}
+	</p>
+</form>
+<a href="{% url commitlog-undo repo_name branch_name %}" class="undo button" title="undo last commit">undo</a>
 {% endif %}
 {% endblock breadcrumbs %}
 
@@ -94,9 +94,8 @@ $(document).ready( function(){
 	})
 	var tree_path =  {% if path %} '{% url commitlog-tree-view repo_name branch_name path %}';
 	{% else %} '{% url commitlog-tree-view repo_name branch_name "" %}'; {% endif %}
-	$("#tree").load(tree_path, function() {
-		  console.log("#file_tree loaded")
-	});
+	
+	$("#tree").load(tree_path);
 {% endif %}
 
 	$("#create_new_file").click( function(){
@@ -149,8 +148,7 @@ $(document).ready( function(){
 	});
 
 	$("#toogle_files").click( function(){
-		//$(this).remove_class("open").new_class("closed");
-
+		$(this).removeClass("open").addClass("closed");
 		$('#tree').toggle("fast");
 	})
 		

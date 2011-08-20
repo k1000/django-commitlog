@@ -134,7 +134,6 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
             "message":"modified %s" % path
         } )
 
-    #import ipdb; ipdb.set_trace()
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,
         form= form,
@@ -151,6 +150,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         request, 
         'commitlog/edit.html', 
         context)
+
 
 def view(request, repo_name, branch, path, commit_sha=None,):
     """
