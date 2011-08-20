@@ -36,7 +36,7 @@
 <link rel="stylesheet" type="text/css" href="{{ GITTER_MEDIA_URL }}commitlog/css/theme_dark.css" />
 
 <div class="gitter">
-	<p><a href="#" id="toogle_files">Files:</a></p>
+	<p><a href="#" id="toogle_files" class="toggle" rel="#tree">Files:</a></p>
 	<div id="tree">
 {% block git_tree %}{% endblock git_tree %}
 	</div>
@@ -76,8 +76,26 @@
 
 <script type="text/javascript">
 
-function mk_page_id( url ){
-	return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
+function TabManager( tab_container, pages ){
+	this.tab_container = tab_container;
+	this.pages = pages;
+	this.self = this;
+	tab_container.delegate("li", 'click', function(){
+		alert( this.pages  )
+		self.tab_container.find("li").removeClass("active");
+		var tab = $(this);
+		self.addClass("active");
+		self.pages.hide_current();
+		self.pages.show_page(tab.href);
+		return false;
+	});
+
+	this.mk_tab = function( url, title ){
+		return this.tab_container.append("<li class='active' ><a href='" + url + "' title='"+ title +"' >" + title + "</a><a href='#' class='close' >close</a></li>")
+	}
+	this.rm_tab = function( url ){
+		this.tab_container.find("a[href=" + url +"]").parent().remove();
+	}
 }
 
 function mk_tab( url, rel, title ){
@@ -90,14 +108,73 @@ function rm_tab( rel ){
 	$("ul.tabs a[href=" + rel +"]").parent().remove();
 }
 
+function PageManager( page_container ){
+
+	this.current = "";
+	this.page_container = page_container;
+	this.pages = {};
+	this.transition = false;
+	this.new_page = function( url, data ){
+		var id = this._mk_page_id( url );
+		this.pages[url] = id;
+		this.set_current( url );
+		return this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
+	}
+	this.rm_page = function( url ){
+		$("#"+this.get_page_id(url)).remove();
+		delete this.pages[url]
+	}
+	this._mk_page_id = function( url ){
+		return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
+	}
+	this.set_current = function( url ){
+		this.current = url;
+	}
+	this.get_page_id = function( url ){
+		return this.pages[url]
+	}
+	this.get_current_id = function( ){
+		return this.pages[ this.current ]
+	}
+	this.get_page = function( url ){
+		return $("#"+this.pages[ url ])
+	}
+	this.get_current = function( ){
+		return $("#"+this.pages[ this.current ])
+	}
+	this.hide_current = function( animation ){
+		var page = this.get_current( );
+		this.transition = true;
+		if (animation) {
+			page.animation();
+		} else {
+			page.hide('slide', {direction: 'left'}, 700, function(){
+				this.transition = false;
+			});
+		}
+	}
+	this.show_page = function( url, animation ){
+		var page = this.get_page( url );
+		this.set_current( url );
+		if (animation) {
+			page.animation();
+		} else {
+			page.show();
+		}
+	}
+}
+
 $(document).ready( function(){
-	var current_main_page = document.location.href;
+	var pages = new PageManager($("#main"));
+	pages.new_page( document.location.href );
+
+	/*var current_main_page = document.location.href;
 	var pages_in_main = {};
 	var page_id = mk_page_id(current_main_page);
-	$(".page").attr( "id", page_id);
-	pages_in_main[current_main_page] = page_id;
-	mk_tab(current_main_page, page_id, "kkkkk")
-
+	$(".page").attr( "id", page_id);*/
+	//pages_in_main[current_main_page] = page_id;
+	//mk_tab(current_main_page, page_id, "kkkkk")
+	mk_tab(pages.current, pages.get_current_id(), "kkkkk")
 
 {% if repo_name and branch_name %}
 	// ----------------- CONSOLE --------------------
@@ -130,40 +207,22 @@ $(document).ready( function(){
 		
 		if (this.rel == "#main") {
 			// if its the same page do nothing
-			if ( this.href != current_main_page) {
+			if ( this.href != pages.current) {
+				// hide current page
 				var transition = true;
-				$( "#" + pages_in_main[current_main_page]  )
-					.hide('slide', {direction: 'left'}, 700, function(){
-						transition = false;
-					});
-				// if page is already loaded
-				if ( pages_in_main[this.href] ){
-					$( "#" + pages_in_main[this.href] )
-						.delay(3000)
-						.show();
-					current_main_page = this.href;
-				} else { // new page
+				pages.hide_current();
+				//show if page is already loaded
+				if ( pages.pages[this.href] ){
+					pages.show_page(this.href)
+				//creat new page
+				} else { 
 					var self = this;
 					$.get(this.href, function(data) {
-						var id = mk_page_id(self.href);
-						pages_in_main[self.href] = id;
-						// delay if current page is not closed
-						if (!self.transition) {
-							$(self.rel)
-								.append("<div class='page' id='" + id + "' >" + data + "</div>");
-						} else {
-							$(self.rel)
-								.append("<div class='page' style='display:none' id='" + id + "' >" + data + "</div>")
-								.delay(4000)
-								.show();;
-						}
-					  	current_main_page = self.href;
-
+						pages.new_page(self.href, data );
 					  	// --------------- tabs -------------------
 					  	$("ul.tabs li").removeClass("active")
-					  	mk_tab(current_main_page, id, $(data).find("h1").html() )
-					  	
-
+					  	mk_tab(pages.current, pages.get_current_id(), $(data).find("h1").html() )
+					  	//mk_tab(current_main_page, id, $(data).find("h1").html() )
 					}, "html")
 				}				
 			}
@@ -183,23 +242,11 @@ $(document).ready( function(){
 		var self = $(this);
 		$("ul.tabs li").removeClass("active");
 		self.addClass("active");
-		$(".page").hide();
-
-		current_main_page = self.find("a").attr("href");
-		var activeTab = pages_in_main[current_main_page]
-		$("#"+activeTab).show();
+		pages.hide_current();
+		var cur_page = self.find("a").attr("href")
+		pages.show_page( cur_page )
 		return false;
 	});
-	// close tab
-	$('#content').delegate("ul.tabs a.close ", 'click', function(){
-		var self = $(this);
-		var page_ref = self.previous().attr("href");
-		var tab_to_close = pages_in_main[page_ref];
-		$("#"+tab_to_close).remove();
-		delete pages_in_main[page_ref];
-		self.previous().parent().remove()
-	})
-
 	// ----------------- FILES --------------------
 
 	$("#toogle_files").click( function(){
