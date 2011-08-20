@@ -2,11 +2,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from _view_helpers import mix_response
-from _git_helpers import get_repo, get_commits
+from _git_helpers import get_repo, get_commits, get_commit, get_diff
 
 from commitlog.settings import REPO_BRANCH, REPO_RESTRICT_VIEW, REPO_ITEMS_IN_PAGE, GITTER_MEDIA_URL
 
-def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
+def log(request, repo_name, branch=REPO_BRANCH, path=None):
     page = int(request.GET.get("page", 0))
     repo = get_repo( repo_name )
     if path:
@@ -32,10 +32,10 @@ def log_view(request, repo_name, branch=REPO_BRANCH, path=None):
         context)
 
 if REPO_RESTRICT_VIEW:
-    log_view = login_required(log_view)
+    log = login_required(log)
 
 
-def commit_view(request, repo_name, branch, commit_sha=None):
+def view(request, repo_name, branch, commit_sha=None):
     """
     view diffs of affeted files in the commit
     """
@@ -58,7 +58,7 @@ def commit_view(request, repo_name, branch, commit_sha=None):
         'commitlog/commit.html', 
         context)
 
-def undo_commit(request, repo_name, branch_name):
+def undo(request, repo_name, branch_name):
     """
     undo last commit
     """
@@ -68,7 +68,7 @@ def undo_commit(request, repo_name, branch_name):
     messages.success(request, reset_result ) 
     return redirect('commitlog-commit-view', repo_name, branch_name  )
 
-def diff_view(request, repo_name, branch, path, commits=[]):
+def diff(request, repo_name, branch, path, commits=[]):
     """
     view file diffs betwin given commits
     """

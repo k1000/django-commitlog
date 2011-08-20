@@ -1,18 +1,11 @@
 {% extends "commitlog/commitlog_base.html" %} {% load commit_tags %}
 
 
-{% block git_breadcrumbs %}
-	<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" >root/</a> </li>
-{% endblock git_breadcrumbs %}
-
-
 {% block git_content %}
 <div class="page">
 {% if commit %}
 	<h2>Commit {{ commit.hexsha|truncatechars:16 }}</h2>
 	{% include "commitlog/_commit.html" %}
-
-	{# {% include "commitlog/_diff.html" %} #}
 {% else %}
 	<h2>No commit found</h2>
 {% endif %}

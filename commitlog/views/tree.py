@@ -8,7 +8,7 @@ from commitlog.forms import FileUploadForm
 from commitlog.settings import  REPO_BRANCH, GITTER_MEDIA_URL
 
 @login_required
-def tree_view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
+def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
     
     repo = get_repo( repo_name )
     commit, tree = get_commit_tree(repo, commit_sha)

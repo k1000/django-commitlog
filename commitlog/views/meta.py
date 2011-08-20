@@ -4,7 +4,7 @@ from commitlog.forms import SearchForm
 from _view_helpers import mix_response
 from _git_helpers import get_repo
 
-def repos_view(request):
+def repos(request):
     context = {
         "repos":dict([ (repo_name, get_repo( repo_name )) for repo_name in REPOS]),
     }
@@ -13,10 +13,10 @@ def repos_view(request):
         'commitlog/list_repos.html', 
         context)
 
-def branches_view(request, repo_name):
+def branches(request, repo_name):
     pass
           
-def search_view(request, repo_name, branch):
+def search(request, repo_name, branch):
     """
     serch files for string
     """
@@ -52,7 +52,7 @@ def search_view(request, repo_name, branch):
         'commitlog/found_files.html', 
         context)
 
-def consol_view(request, repo_name):
+def consol(request, repo_name):
     """
     serch files for string
     """

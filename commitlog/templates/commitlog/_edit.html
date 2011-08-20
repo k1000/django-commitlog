@@ -1,5 +1,6 @@
 {% load commit_tags %}
 <div id="edit_{{repo_name}}_{{branch_name}}_{{ path|slugify }}">
+	
 
 	<ul class="breadcrumbs">
 		<li>path <a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >root/</a> </li>
@@ -8,7 +9,7 @@
 		{% endfor %}
 	</ul>
 
-	<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
+	<a class="history ajax" rel="#main" href="{% url commitlog-history-file repo_name branch_name path %}" >history</a>
 	<h1>"{{path}}"</h1>
 
 	{% if result_msg %}

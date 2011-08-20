@@ -7,10 +7,10 @@
 		<li>project "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
 		{% endif %}
 		{% if branch_name %}
-		<li>branch "<a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="main" >{{ branch_name }}</a>" </li>	
+		<li>branch "<a class="ajax" rel="main" href="{% url commitlog-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li><a href="{% url commitlog-branch repo_name branch_name %}" class="ajax" rel="main" >commits</a> </li>
+		<li><a class="ajax" rel="main" href="{% url commitlog-branch repo_name branch_name %}"  >commits</a> </li>
 		<form method="post" action="{% url commitlog-search repo_name branch_name %}" class="serch_form">
 			<p>
 				<input type="text" name="query" id="id_query" value="{{ query }}" /> 
@@ -64,8 +64,8 @@
 
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<script type="text/javascript" src="//https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
-<script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/js/script.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
@@ -107,21 +107,36 @@ $(document).ready( function(){
 
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
-		var self = this
+		
 		if (this.rel == "#main") {
-
+			// if its the same page do nothing
 			if ( this.href != current_main_page) {
+				var transition = true;
+				$( "#" + pages_in_main[current_main_page]  )
+					.hide('slide', {direction: 'left'}, 700, function(){
+						transition = false;
+					});
 				// if page is already loaded
-				$( "#" + pages_in_main[current_main_page]  ).toggle("slow");
 				if ( pages_in_main[this.href] ){
-					$( "#" + pages_in_main[this.href] ).show();
+					$( "#" + pages_in_main[this.href] )
+						.delay(3000)
+						.show();
 					current_main_page = this.href;
 				} else { // new page
+					var self = this;
 					$.get(this.href, function(data) {
-						var id = mk_page_id(self.href)
+						var id = mk_page_id(self.href);
 						pages_in_main[self.href] = id;
-					  	$(self.rel).append("<div class='page' id='" + id + "' >" + data + "</div>")
-						//	.show("slide", { direction: "left" }, 1000); 
+						// delay if current page is not closed
+						if (!self.transition) {
+							$(self.rel)
+								.append("<div class='page' id='" + id + "' >" + data + "</div>");
+						} else {
+							$(self.rel)
+								.append("<div class='page' style='display:none' id='" + id + "' >" + data + "</div>")
+								.delay(4000)
+								.show();;
+						}
 					  	current_main_page = self.href;
 					}, "html")
 				}				
