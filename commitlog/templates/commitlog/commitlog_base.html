@@ -41,7 +41,9 @@
 {% block git_tree %}{% endblock git_tree %}
 	</div>
 
+	
 	<div id="main">
+	<ul class="tabs"></ul>
 {% block git_content %}{% endblock git_content %}
 	</div>
 
@@ -73,36 +75,55 @@
 
 
 <script type="text/javascript">
-var current_main_page = document.location.href;
-var pages_in_main = {};
-var page_id = mk_page_id(current_main_page);
-$(".page").attr( "id", page_id);
-pages_in_main[current_main_page] = page_id;
 
 function mk_page_id( url ){
 	return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
 }
 
+function mk_tab( url, rel, title ){
+	var tabs = $("ul.tabs");
+	tabs.append("<li class='active' ><a href='" + url + "' title='"+ title +"' >" + title + "</a><a href='#' class='close' >close</a></li>");
+	return tabs
+}
+
+function rm_tab( rel ){
+	$("ul.tabs a[href=" + rel +"]").parent().remove();
+}
+
 $(document).ready( function(){
+	var current_main_page = document.location.href;
+	var pages_in_main = {};
+	var page_id = mk_page_id(current_main_page);
+	$(".page").attr( "id", page_id);
+	pages_in_main[current_main_page] = page_id;
+	mk_tab(current_main_page, page_id, "kkkkk")
+
 
 {% if repo_name and branch_name %}
+	// ----------------- CONSOLE --------------------
+
 	$("#console_enter").click(function( ){
 		var data = {"com":"git status"};
 		$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
 		  
 		});
 	})
+
+	// ----------------- TREE INIT --------------------
 	var tree_path =  {% if path %} '{% url commitlog-tree-view repo_name branch_name path %}';
 	{% else %} '{% url commitlog-tree-view repo_name branch_name "" %}'; {% endif %}
 	
 	$("#tree").load(tree_path);
 {% endif %}
-
+	
+	// ----------------- NEW FILE --------------------
 	$("#create_new_file").click( function(){
 		var loc = document.getElementById("cur_path").value + "/" +
 			document.getElementById("new_file_name").value;
 		document.location = loc;
 	})
+
+	// ----------------- PAGES --------------------
 
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
@@ -137,6 +158,12 @@ $(document).ready( function(){
 								.show();;
 						}
 					  	current_main_page = self.href;
+
+					  	// --------------- tabs -------------------
+					  	$("ul.tabs li").removeClass("active")
+					  	mk_tab(current_main_page, id, $(data).find("h1").html() )
+					  	
+
 					}, "html")
 				}				
 			}
@@ -145,7 +172,35 @@ $(document).ready( function(){
 		  		console.log(this.href)
 			});
 		}
+		return false;
 	});
+
+
+	// ----------------- TABS --------------------
+	// activate tab
+	$('#content').delegate("ul.tabs li ", 'click', function()
+       {
+		var self = $(this);
+		$("ul.tabs li").removeClass("active");
+		self.addClass("active");
+		$(".page").hide();
+
+		current_main_page = self.find("a").attr("href");
+		var activeTab = pages_in_main[current_main_page]
+		$("#"+activeTab).show();
+		return false;
+	});
+	// close tab
+	$('#content').delegate("ul.tabs a.close ", 'click', function(){
+		var self = $(this);
+		var page_ref = self.previous().attr("href");
+		var tab_to_close = pages_in_main[page_ref];
+		$("#"+tab_to_close).remove();
+		delete pages_in_main[page_ref];
+		self.previous().parent().remove()
+	})
+
+	// ----------------- FILES --------------------
 
 	$("#toogle_files").click( function(){
 		$(this).removeClass("open").addClass("closed");
