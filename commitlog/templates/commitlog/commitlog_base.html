@@ -79,14 +79,14 @@
 function TabManager( tab_container, pages ){
 	this.tab_container = tab_container;
 	this.pages = pages;
-	this.self = this;
-	tab_container.delegate("li", 'click', function(){
-		alert( this.pages  )
+	var self = this;
+	tab_container.delegate("li", 'click', function(event){
+		event.preventDefault();
 		self.tab_container.find("li").removeClass("active");
 		var tab = $(this);
-		self.addClass("active");
+		tab.addClass("active");
 		self.pages.hide_current();
-		self.pages.show_page(tab.href);
+		self.pages.show_page(tab.find("a")[0].href);
 		return false;
 	});
 
@@ -98,15 +98,6 @@ function TabManager( tab_container, pages ){
 	}
 }
 
-function mk_tab( url, rel, title ){
-	var tabs = $("ul.tabs");
-	tabs.append("<li class='active' ><a href='" + url + "' title='"+ title +"' >" + title + "</a><a href='#' class='close' >close</a></li>");
-	return tabs
-}
-
-function rm_tab( rel ){
-	$("ul.tabs a[href=" + rel +"]").parent().remove();
-}
 
 function PageManager( page_container ){
 
@@ -115,7 +106,7 @@ function PageManager( page_container ){
 	this.pages = {};
 	this.transition = false;
 	this.new_page = function( url, data ){
-		var id = this._mk_page_id( url );
+		var id = this.mk_page_id( url );
 		this.pages[url] = id;
 		this.set_current( url );
 		return this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
@@ -124,7 +115,7 @@ function PageManager( page_container ){
 		$("#"+this.get_page_id(url)).remove();
 		delete this.pages[url]
 	}
-	this._mk_page_id = function( url ){
+	this.mk_page_id = function( url ){
 		return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
 	}
 	this.set_current = function( url ){
@@ -167,18 +158,15 @@ function PageManager( page_container ){
 $(document).ready( function(){
 	var pages = new PageManager($("#main"));
 	pages.new_page( document.location.href );
+	// give current page id
+	$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 
-	/*var current_main_page = document.location.href;
-	var pages_in_main = {};
-	var page_id = mk_page_id(current_main_page);
-	$(".page").attr( "id", page_id);*/
-	//pages_in_main[current_main_page] = page_id;
-	//mk_tab(current_main_page, page_id, "kkkkk")
-	mk_tab(pages.current, pages.get_current_id(), "kkkkk")
+	var tabs = new TabManager($("ul.tabs"), pages);
+	tabs.mk_tab( document.location.href , "kkkkk");
 
 {% if repo_name and branch_name %}
-	// ----------------- CONSOLE --------------------
 
+	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var data = {"com":"git status"};
 		$('#console_output').load("{% url commitlog-consol repo_name %}", data, function() {
@@ -221,7 +209,8 @@ $(document).ready( function(){
 						pages.new_page(self.href, data );
 					  	// --------------- tabs -------------------
 					  	$("ul.tabs li").removeClass("active")
-					  	mk_tab(pages.current, pages.get_current_id(), $(data).find("h1").html() )
+					  	tabs.mk_tab(self.href, $(data).find("h1").html());
+					  	//mk_tab(pages.current, pages.get_current_id(), $(data).find("h1").html() )
 					  	//mk_tab(current_main_page, id, $(data).find("h1").html() )
 					}, "html")
 				}				
@@ -237,7 +226,7 @@ $(document).ready( function(){
 
 	// ----------------- TABS --------------------
 	// activate tab
-	$('#content').delegate("ul.tabs li ", 'click', function()
+	/*$('#content').delegate("ul.tabs li ", 'click', function()
        {
 		var self = $(this);
 		$("ul.tabs li").removeClass("active");
@@ -246,7 +235,7 @@ $(document).ready( function(){
 		var cur_page = self.find("a").attr("href")
 		pages.show_page( cur_page )
 		return false;
-	});
+	});*/
 	// ----------------- FILES --------------------
 
 	$("#toogle_files").click( function(){
