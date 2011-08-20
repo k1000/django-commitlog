@@ -82,19 +82,27 @@ function TabManager( tab_container, pages ){
 	var self = this;
 	tab_container.delegate("li", 'click', function(event){
 		event.preventDefault();
-		self.tab_container.find("li").removeClass("active");
+		self.deactivate_tabs();
 		var tab = $(this);
 		tab.addClass("active");
 		self.pages.hide_current();
-		self.pages.show_page(tab.find("a")[0].href);
+		self.pages.show_page(tab.find("a.tab").attr("href"));
 		return false;
 	});
 
 	this.mk_tab = function( url, title ){
-		return this.tab_container.append("<li class='active' ><a href='" + url + "' title='"+ title +"' >" + title + "</a><a href='#' class='close' >close</a></li>")
+		this.deactivate_tabs();
+		return this.tab_container.append("<li class='active' ><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a><a href='#' class='close' >close</a></li>")
 	}
 	this.rm_tab = function( url ){
-		this.tab_container.find("a[href=" + url +"]").parent().remove();
+		this.tab_container.find("a[href='" + url +"']").parent().remove();
+	}
+	this.deactivate_tabs = function( ){
+		this.tab_container.find("li").removeClass("active");
+	}
+	this.activate_tab = function( url ){
+		this.deactivate_tabs();
+		this.tab_container.find("a.[href='" + url +"']").parent().addClass("active");
 	}
 }
 
@@ -156,11 +164,13 @@ function PageManager( page_container ){
 }
 
 $(document).ready( function(){
+
+	// initialize pages
 	var pages = new PageManager($("#main"));
 	pages.new_page( document.location.href );
 	// give current page id
 	$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-
+	// initialize tabs
 	var tabs = new TabManager($("ul.tabs"), pages);
 	tabs.mk_tab( document.location.href , "kkkkk");
 
@@ -181,6 +191,12 @@ $(document).ready( function(){
 	$("#tree").load(tree_path);
 {% endif %}
 	
+	// ----------------- FILES --------------------
+	$("#toogle_files").click( function(){
+		$(this).removeClass("open").addClass("closed");
+		$('#tree').toggle("fast");
+	})
+
 	// ----------------- NEW FILE --------------------
 	$("#create_new_file").click( function(){
 		var loc = document.getElementById("cur_path").value + "/" +
@@ -201,17 +217,15 @@ $(document).ready( function(){
 				pages.hide_current();
 				//show if page is already loaded
 				if ( pages.pages[this.href] ){
-					pages.show_page(this.href)
+					tabs.activate_tab(this.href);
+					pages.show_page(this.href);
 				//creat new page
 				} else { 
 					var self = this;
 					$.get(this.href, function(data) {
 						pages.new_page(self.href, data );
 					  	// --------------- tabs -------------------
-					  	$("ul.tabs li").removeClass("active")
 					  	tabs.mk_tab(self.href, $(data).find("h1").html());
-					  	//mk_tab(pages.current, pages.get_current_id(), $(data).find("h1").html() )
-					  	//mk_tab(current_main_page, id, $(data).find("h1").html() )
 					}, "html")
 				}				
 			}
@@ -222,26 +236,6 @@ $(document).ready( function(){
 		}
 		return false;
 	});
-
-
-	// ----------------- TABS --------------------
-	// activate tab
-	/*$('#content').delegate("ul.tabs li ", 'click', function()
-       {
-		var self = $(this);
-		$("ul.tabs li").removeClass("active");
-		self.addClass("active");
-		pages.hide_current();
-		var cur_page = self.find("a").attr("href")
-		pages.show_page( cur_page )
-		return false;
-	});*/
-	// ----------------- FILES --------------------
-
-	$("#toogle_files").click( function(){
-		$(this).removeClass("open").addClass("closed");
-		$('#tree').toggle("fast");
-	})
 		
 })
 
