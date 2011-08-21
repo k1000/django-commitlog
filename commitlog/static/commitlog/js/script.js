@@ -38,7 +38,7 @@ $(document).ready( function(){
 	// ----------------- PAGES --------------------
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
-		
+		var self = this;
 		if (this.rel == "#main") {
 			// if its the same page do nothing
 			if ( this.href != pages.current) {
@@ -52,22 +52,28 @@ $(document).ready( function(){
 				} else { 
 					var self = this;
 					$.get(this.href, function(data) {
-						pages.new_page(self.href, data );
-					  	var tab_text = $(data).find("h1").text().replace('"', "");
+						console.log( data.html  )
+						pages.new_page(self.href, data.html );
+					  	var tab_text = $(data.html).find("h1").text().replace('"', "");
 					  	tabs.mk_tab(self.href, tab_text);
-					}, "html")
+					}, "json")
 				}				
 			}
 		}else {
-			$(this.rel).load(this.href, function() {
-		  		console.log(this.href)
-			});
+			get_page(this.href, this.rel)
 		}
 		return false;
 	});
 
 })
 
+function get_page(url, rel){
+	var rel = rel;
+	var url = url; 
+	$.get(url, function(data) {
+		$(rel).html( data.html  )
+	}, "json")
+}
 
 function TabManager( tab_container, pages ){
 	this.tab_container = tab_container;

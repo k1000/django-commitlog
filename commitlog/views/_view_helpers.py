@@ -1,11 +1,30 @@
+import git
+import commitlog
 from django.utils import simplejson
+#import json
+
 from django.template.response import TemplateResponse
 from django.template.loader import render_to_string, get_template
 from django.http import  HttpResponse
 
 from commitlog.settings import PARTIAL_PREFIX
 
-def mix_response(request, template_name, context, partial_prefix = "_"):
+def git_to_dict( blob ):
+    properties = ("abspath", "name", "mode",  "hexsha", "path", "size", "type",  ) #"mime_type",
+    return dict([ ( prop, getattr( blob, prop ) )  for prop in properties])
+
+# json helper
+def to_json(python_object):
+
+    if isinstance(python_object, (git.Blob, git.Tree) ):
+        return git_to_dict( python_object )
+
+    if isinstance(python_object, commitlog.forms.FileUploadForm ):
+        return python_object.as_p()
+    return None
+    #raise TypeError(repr(python_object) + ' is not JSON serializable')
+
+def mix_response(request, template_name, context, partial_prefix = "_", converter=None):
 
     if request.is_ajax():
         tmpl_dir = template_name.split("/")
@@ -15,11 +34,15 @@ def mix_response(request, template_name, context, partial_prefix = "_"):
             rendered = render_to_string( partial_template_path, context)
         except TemplateDoesNotExist:
             return TemplateResponse( 
-                request, 
-                template_name, 
+                request,
+                template_name,
                 context)
         else:
-            return HttpResponse(rendered, mimetype='application/javascript')
+            response_dict = dict(
+                html = rendered,
+            )
+            response_dict.update( context )
+            return HttpResponse(simplejson.dumps(response_dict, default=to_json), mimetype='application/javascript')
 
     else:
     	return TemplateResponse( 
