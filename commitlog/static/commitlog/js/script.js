@@ -12,9 +12,11 @@ $(document).ready( function(){
 	// initialize pages
 	var pages = new PageManager($("#main"));
 	var tabs = new TabManager($("ul.tabs"), pages);
-	pages.new_page( document.location.href );
+	var pagae1 = $(".page").html();
+	$(".page").remove();
+	pages.new_page( document.location.href, pagae1 );
 	// give current page id
-	$(".page").attr("id", pages.mk_page_id( document.location.href ) );
+	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( document.location.href , "kkkkk");
 	//$.history.init(loadContent);
 	// initialize tabs
@@ -34,7 +36,6 @@ $(document).ready( function(){
 	})
 
 	// ----------------- PAGES --------------------
-
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
 		
@@ -52,8 +53,8 @@ $(document).ready( function(){
 					var self = this;
 					$.get(this.href, function(data) {
 						pages.new_page(self.href, data );
-					  	// --------------- tabs -------------------
-					  	tabs.mk_tab(self.href, $(data).find("h1").html());
+					  	var tab_text = $(data).find("h1").text().replace('"', "");
+					  	tabs.mk_tab(self.href, tab_text);
 					}, "html")
 				}				
 			}
@@ -153,5 +154,3 @@ function PageManager( page_container, options ){
 		page.show();
 	}
 }
-
-

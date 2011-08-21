@@ -3,6 +3,7 @@ from django.conf import settings
 
 REPOS = getattr(settings, "REPOS", {
 	"local": settings.PROJECT_PATH,
+	"commitlog": "/home/kam/Projects/flatmate/env/src/commitlog/.git",
 })
 
 REPO_BRANCH = getattr(settings, "REPO_BRANCH", "master")

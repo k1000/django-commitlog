@@ -40,7 +40,17 @@
 	<div id="tree">
 {% block git_tree %}{% endblock git_tree %}
 	</div>
-
+ <!-- <div>
+ 	<form action="" method="get" >
+		<input type="text" name="file_source" />
+		<button>NEW FILE</button>
+	</form>
+	<form action="" method="post" >
+		<input type="file" name="file_source" />
+		<button>UPLOAD FILE</button>
+	</form>
+ </div>
+-->
 	
 	<div id="main">
 	<ul class="tabs"></ul>
@@ -80,7 +90,7 @@ $(document).ready( function(){
 	var repo = "{{repo_name}}";
 	var branch = "{{ branch_name }}";
 	var path = "{{path}}";
-	
+
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var data = {"com":"git status"};
