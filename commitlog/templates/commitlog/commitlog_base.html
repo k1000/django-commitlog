@@ -74,12 +74,13 @@
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/runmode.js"></script>
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/lib/overlay.js"></script>
 
-
-<script type="text/javascript">
-
-$(document).ready( function(){
 {% if repo_name and branch_name %}
-
+<script type="text/javascript">
+$(document).ready( function(){
+	var repo = "{{repo_name}}";
+	var branch = "{{ branch_name }}";
+	var path = "{{path}}";
+	
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var data = {"com":"git status"};
@@ -91,12 +92,10 @@ $(document).ready( function(){
 	// ----------------- TREE INIT --------------------
 	var tree_path =  {% if path %} '{% url commitlog-tree-view repo_name branch_name path %}';
 	{% else %} '{% url commitlog-tree-view repo_name branch_name "" %}'; {% endif %}
-	
 	$("#tree").load(tree_path);
-{% endif %}	
 })
-
 </script>
+{% endif %}	
 {% block js %}{% endblock js %}
 
 {% endblock content %}
