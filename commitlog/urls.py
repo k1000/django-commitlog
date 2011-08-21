@@ -2,8 +2,6 @@ from django.conf.urls.defaults import *
 
 # place app url patterns here
 urlpatterns = patterns('commitlog.views.file',
-    
-
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/edit/(?P<path>[a-zA-Z0-9\-_\.\/]+)$',
 		"edit", name='commitlog-edit-file'),
 
