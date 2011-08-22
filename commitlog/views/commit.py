@@ -51,7 +51,7 @@ def view(request, repo_name, branch, commit_sha=None):
         repo_name = repo_name,
         branch_name = branch,
         diff = diff,
-        commit = commit,
+        commit = commit_sha,
     )
     return mix_response( 
         request, 

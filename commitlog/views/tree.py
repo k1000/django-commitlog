@@ -28,7 +28,7 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
             result_msg = mk_commit(repo, msg, file_path )
             messages.success(request, result_msg )
     else:
-        form = FileUploadForm( )
+        form = FileUploadForm( initial={ "dir_path": path } )
 
     context = dict(
         GITTER_MEDIA_URL = GITTER_MEDIA_URL,

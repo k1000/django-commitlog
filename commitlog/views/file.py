@@ -32,7 +32,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
     )
 
     if request.method == 'POST':
-        form = form_class( request.POST, request.FILES )
+        form = FileUploadForm( request.POST, request.FILES )
         if form.is_valid():
             repo = Repo(REPOS[repo_name])
 
@@ -43,7 +43,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
             result_msg = mk_commit(repo, msg, file_path )
             messages.success(request, result_msg ) 
 
-            dr_path = "/".join( path.split("/")[:-1] )
+            dir_path = "/".join( path.split("/")[:-1] )
             return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
         else:
             result_msg = MSG_COMMIT_ERROR
@@ -65,6 +65,44 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
         'commitlog/new_file.html', 
         context)
 
+@login_required
+def upload(request, repo_name, branch=REPO_BRANCH ):
+    result_msg = file_source = path = ""
+
+    if request.method == 'POST':
+        form = FileUploadForm( request.POST, request.FILES )
+        if form.is_valid():
+            dir_path = form.cleaned_data["dir_path"] #!!! FIX security
+            #TODO check if file exist allready
+            repo = Repo(REPOS[repo_name])
+
+            file_source = form.cleaned_data["file_source"]
+            path = os.path.join( dir_path, file_source["name"] )
+            write_file(file_path, file_source )
+
+            msg = form.cleaned_data["message"]
+            result_msg = mk_commit(repo, msg, path )
+            messages.success(request, result_msg )
+
+            return redirect('commitlog-tree-view', repo_name, branch, dir_path  )
+        else:
+            result_msg = MSG_COMMIT_ERROR
+    else:
+        form = FileUploadForm( initial={"message":"%s added" % path} )
+    
+    context = dict(
+        GITTER_MEDIA_URL = GITTER_MEDIA_URL,
+        form= form,
+        breadcrumbs = make_crumbs(path),
+        result_msg = result_msg,
+        repo_name = repo_name,
+        branch_name = branch,
+        path = path,
+    )
+    return mix_response( 
+        request, 
+        'commitlog/new_file.html', 
+        context)
 
 
 @login_required

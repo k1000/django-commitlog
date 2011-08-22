@@ -5,15 +5,15 @@
 <h2>GIT Repositories<h2>
 <ul class="repos">
 	{% for repo_name, repo in repos.items %}
-	<li><h3>{{ repo_name }}</h3>
-		<p>last commit {{ repo.head.commit.authored_date|mkdate }} "{{ repo.head.commit.message }}" [{{ repo.head.commit.author }}]</p>
+	<li><h2>{{ repo_name }}</h2>
+		<p>last commit <em>{{ repo.head.commit.authored_date|mkdate }}</em> "{{ repo.head.commit.message }}" [<a href="mailto:{{ repo.head.commit.author.email }}">{{ repo.head.commit.author }}</a>]</p>
 
 		<p>branches:</p>
 		<ul class="branches">
 			{% for branch in repo.branches %}
 			<li>
-				<a href="{% url commitlog-tree-view repo_name branch.name "" %}">"{{ branch.name }}"</a>
-				(<a href="{% url commitlog-branch repo_name branch.name %}">log</a>)
+				<!-- <a href="{% url commitlog-tree-view repo_name branch.name "" %}">"{{ branch.name }}"</a> -->
+				<a href="{% url commitlog-log repo_name branch.name %}">{{ branch.name }}</a>
 				{% if repo.tags %}
 				<p>Tags.</p>
 				<ul class="tags">

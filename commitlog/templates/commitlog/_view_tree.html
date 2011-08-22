@@ -47,4 +47,11 @@
 {% endfor %}
 </ul>
 
+{% if not commit %}
+	<form action="{% url commitlog-upload-file  repo_name branch_name %}" method="post" >
+		{{ upload_form.as_p }}
+		<button>UPLOAD</button>
+	</form>
+{% endif %}
+
 </div>

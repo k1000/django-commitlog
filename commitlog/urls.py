@@ -8,6 +8,9 @@ urlpatterns = patterns('commitlog.views.file',
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new/(?P<path>[a-zA-Z0-9\-_\.\/]+)$', 
 		"new", name='commitlog-new-file'),
 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/upload/', 
+        "upload", name='commitlog-upload-file'),
+
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/delete/(?P<path>[a-zA-Z0-9\-_\.\/\\]+)$', 
         "delete", name='commitlog-delete-file'),
 
@@ -37,7 +40,7 @@ urlpatterns += patterns('commitlog.views.commit',
         "diff", name='commitlog-diff-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/$', 
-    	"log", name='commitlog-branch'),
+    	"log", name='commitlog-log'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/undo/$', 
         "undo", name='commitlog-undo'),

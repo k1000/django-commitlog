@@ -17,7 +17,7 @@ $(document).ready( function(){
 	pages.new_page( document.location.href, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( document.location.href , "kkkkk");
+	tabs.mk_tab( document.location.href , $(".page h2").html() );
 	//$.history.init(loadContent);
 	// initialize tabs
 

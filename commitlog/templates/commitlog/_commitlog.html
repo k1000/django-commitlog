@@ -3,7 +3,7 @@
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
 <h2>
-    <a href="{% url commitlog-branch repo_name branch_name %}">
+    <a href="{% url commitlog-log repo_name branch_name %}">
         Commits at "{{ branch_name }}" branch 
     </a>
     {% if path %}
