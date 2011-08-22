@@ -24,25 +24,33 @@ def to_json(python_object):
     return None
     #raise TypeError(repr(python_object) + ' is not JSON serializable')
 
-def mix_response(request, template_name, context, partial_prefix = "_", converter=None):
+def partial_json_convert( template_name, context ):
+    partial_prefix = "_"
+    tmpl_dir = template_name.split("/")
+        
+    partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
+    try:
+        partial = render_to_string( partial_template_path, context)
+    except TemplateDoesNotExist:
+        return TemplateResponse( 
+            request,
+            template_name,
+            context)
+    else:
+        context["html"] = partial
+    return context
+
+    
+def mix_response(request, template_name, context, json_convert=None):
 
     if request.is_ajax():
-        tmpl_dir = template_name.split("/")
         
-        partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
-        try:
-            rendered = render_to_string( partial_template_path, context)
-        except TemplateDoesNotExist:
-            return TemplateResponse( 
-                request,
-                template_name,
-                context)
+        if json_convert:
+            response_dict = json_convert( template_name, context )
         else:
-            response_dict = dict(
-                html = rendered,
-            )
-            response_dict.update( context )
-            return HttpResponse(simplejson.dumps(response_dict, default=to_json), mimetype='application/javascript')
+            response_dict = partial_json_convert( template_name, context )
+
+        return HttpResponse(simplejson.dumps(response_dict, default=to_json), mimetype='application/javascript')
 
     else:
     	return TemplateResponse( 
