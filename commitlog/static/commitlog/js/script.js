@@ -136,6 +136,7 @@ function TabManager( tab_container, pages ){
 		tab_to_remove.remove();
 		var prev_next = get_prev_next( this.pages.pages, url );
 		var new_active_tab = (prev_next.prev)? prev_next.prev: prev_next.next;
+		this.pages.rm_page( url )
 		if (new_active_tab){
 			this.activate_tab( new_active_tab );
 			this.pages.show_page( new_active_tab );
