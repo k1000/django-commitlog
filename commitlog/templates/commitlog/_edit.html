@@ -26,5 +26,10 @@
 		{% include "commitlog/_edit_file.html" %}
 	{% endif %}
 	</div>
+
+	<form action="{% url commitlog-delete-file repo_name branch_name path %}" method="post">
+		{{ delete_form.as_p }}
+		<button class="delete">DELETE</button>
+	</form>
 </div>
 

@@ -1,11 +1,11 @@
 {% include "commitlog/_edit_file.html" %}
 
 {# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/python-complete.js"></script> #}
-{% if file_meta %}
+{% if file_meta and file_meta.type != "text/plain" %}
 	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
 {% endif %}
 
-{% if file_meta.type == "css" or file_meta.type == "html"%}
+{% if file_meta.type == "css" or file_meta.type == "html" %}
 <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/zen-textarea/zen_textarea.min.js"></script>	
 {% endif %}
 

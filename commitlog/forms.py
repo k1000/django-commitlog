@@ -13,8 +13,9 @@ class FileEditForm(CommitMessageForm):
 	"""docstring for FileEditForm"""
 	file_source = forms.FileField()
 
-class FileDeleteForm(CommitMessageForm):
+class FileDeleteForm(forms.Form):
 	"""docstring for FileEditForm"""
+	message = forms.CharField( widget=forms.HiddenInput )
 	path = forms.CharField( widget=forms.HiddenInput )
 
 class FileUploadForm(forms.Form):

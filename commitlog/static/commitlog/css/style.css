@@ -379,4 +379,8 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
 	border: 1px solid black;
 	overflow: auto;
 }
-
+/* ---------- DELETE -------------- */
+button.delete {
+  float:left;
+  color: red;
+}

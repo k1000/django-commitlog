@@ -19,6 +19,7 @@ MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
 MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
 MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
+MSG_DELETE = "File '%s' has been deleted"
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -148,7 +149,6 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         form_class = FileEditForm
     
     if request.method == 'POST':
-        
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
             if file_meta["mime_type"] == "text":
@@ -181,6 +181,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         result_msg = result_msg,
         repo_name = repo_name,
         branch_name = branch,
+        delete_form = FileDeleteForm( initial={"message":MSG_DELETE % path }),
         path = path,
     )
         
@@ -189,7 +190,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         'commitlog/edit.html', 
         context)
 
-
+@login_required
 def view(request, repo_name, branch, path, commit_sha=None,):
     """
     view file in the commit
@@ -254,7 +255,8 @@ def view(request, repo_name, branch, path, commit_sha=None,):
         'commitlog/view_file.html', 
         context)
 
-def delete(request, repo_name, branch, path):
+@login_required
+def delete(request, repo_name, branch, path ):
     repo = get_repo( repo_name )
     tree = repo.tree()
     try:

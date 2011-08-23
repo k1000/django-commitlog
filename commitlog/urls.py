@@ -11,7 +11,7 @@ urlpatterns = patterns('commitlog.views.file',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/upload/', 
         "upload", name='commitlog-upload-file'),
 
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/delete/(?P<path>[a-zA-Z0-9\-_\.\/\\]+)$', 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/delete/(?P<path>[a-zA-Z0-9\-_\.\/]+)$', 
         "delete", name='commitlog-delete-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/rename/(?P<file_path>[a-zA-Z0-9\-_\.\/\\]+)$', 
