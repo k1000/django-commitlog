@@ -110,12 +110,15 @@ function TabManager( tab_container, pages ){
 
 	tab_container.delegate("li", 'click', function(event){
 		//event.preventDefault();
-		self.deactivate_tabs();
 		var tab = $(this);
-		tab.addClass("active");
-		self.pages.hide_current();
-		self.pages.show_page(tab.find("a.tab").attr("href"));
-		return false;
+		var tab_url = tab.find("a.tab").attr("href");
+		if (tab_url != self.pages.current) {
+			self.deactivate_tabs();
+			tab.addClass("active");
+			self.pages.hide_current();
+			self.pages.show_page(tab.find("a.tab").attr("href"));
+		}
+		return false
 	});
 
 	tab_container.delegate("a.close", 'click', function(event){
