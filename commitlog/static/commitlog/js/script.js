@@ -15,6 +15,7 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	pages.new_page( document.location.href, pagae1 );
+	console.log(pages)
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( document.location.href , "kkkkk");
@@ -74,6 +75,25 @@ $(document).ready( function(){
 
 })
 
+function prev_next( obj, current ) {
+	// gets previous and next on both sides of current
+	var prev_next = {"prev":null, "next":null};
+	var var_prev = null;
+	for (var key in obj){
+		if (hasOwnProperty.call(obj, key)){
+			if ( prev_next.prev ) {
+				prev_next.next =  key;
+				return prev_next
+			}
+			if ( key == current ) {
+				prev_next.prev = var_prev;
+			}
+			var_prev = key;
+		}
+
+	}
+}
+
 function get_page(url, rel){
 	var rel = rel;
 	var url = url; 
@@ -85,7 +105,9 @@ function get_page(url, rel){
 function TabManager( tab_container, pages ){
 	this.tab_container = tab_container;
 	this.pages = pages;
+	this.current = previous = next = "";
 	var self = this;
+
 	tab_container.delegate("li", 'click', function(event){
 		event.preventDefault();
 		self.deactivate_tabs();
@@ -96,12 +118,22 @@ function TabManager( tab_container, pages ){
 		return false;
 	});
 
+	this.get_tabs = function() {
+		
+	}
 	this.mk_tab = function( url, title ){
 		this.deactivate_tabs();
 		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close tab' >x</a><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a></li>")
 	}
 	this.rm_tab = function( url ){
-		this.get_tab_by_url( url ).parent().remove();
+		var tab_to_remove = this.get_tab_by_url( url ).parent()
+		tab_to_remove.remove();
+		prev_next = prev_next( this.pages.pages, url )
+		
+		if (prev_next.prev) {
+			this.pages.show_page(prev_next.prev);
+		}
+		
 	}
 	this.deactivate_tabs = function( ){
 		this.tab_container.find("li").removeClass("active");
