@@ -8,10 +8,12 @@
 		<li class="project">{{ repo_name }}</li>
 		{% endif %}
 		{% if branch_name %}
-		<li>branch "<a class="ajax" rel="main" href="{% url commitlog-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
-		{% endif %} 
+
+		<li>branch "<a class="ajax" rel="#pages" href="{% url commitlog-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
+		{% endif %}
 		{% if repo_name and branch_name %}
-		<li><a class="ajax" rel="main" href="{% url commitlog-log repo_name branch_name %}"  >commits</a> </li>
+		<li><a class="ajax" rel="#pages" href="{% url commitlog-log repo_name branch_name %}"  >commits</a> </li>
+
 		{% endif %}
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
@@ -55,26 +57,32 @@
 	</form>
  </div>
 -->
-	
-	<div id="main">
-	<ul class="tabs"></ul>
-{% block git_content %}{% endblock git_content %}
-	</div>
-
 	<div id="toolbox">
 	</div>
-	
+
 	<div id="console">
 		<h4>Console</h4>
-
-		<div id="console_output">
-		</div>
-		<p>
+		<div class="content">
+			<div id="console_output"></div>
+			<p>
 				<label for="console-input">Command</label>
-				<input id="console-input" type="text"  />
+				<input id="console-input" type="text" />
 				<button id="console_enter">ENTER</button>
-		</p>
+			</p>
+		</div>
 	</div>
+	
+	<div id="main">
+		<ul class="tabs"></ul>
+		<div id="pages">
+{% block git_content %}{% endblock git_content %}
+		</div>
+	</div>
+
+	
+	
+	
+
 </div> 
 
 

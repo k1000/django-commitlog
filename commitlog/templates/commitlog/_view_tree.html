@@ -19,7 +19,7 @@
 
 <ul class="list">
 {% if dir_path.0 %}
-	<li><a href="./" class="ajax" rel="#main" >..</a>
+	<li><a href="./" class="ajax" rel="#pages" >..</a>
 {% endif %}
 
 {% for element in tree %}
@@ -27,25 +27,27 @@
 	<li class="{{ element.type }}">
 		{% if element.type == "tree" %}
 			{% if commit %}
-			<a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#tree" >{{ element.name }}/</a>
+			<a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/" >{{ element.name }}/</a>
 			{% else %}
-			<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" class="ajax" rel="#tree">{{ element.name }}/</a>
+			<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/">{{ element.name }}/</a>
 			{% endif %}
 		{% else %}
 			{% if commit %}
-			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#main" >{{ element.name }}</a>
+			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
 			{% else %}
-			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" class="ajax" rel="#main" >{{ element.name }}</a>
+			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
 			{% endif %}
 			<small>{{ element.size|filesizeformat }}</small>
 
 		{% endif %}
 		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
-		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" >delete</a>
+		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" title="delete">x</a>
 		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="#toolbox" >rename</a>
 	</li>
 {% endfor %}
 </ul>
+
+<p class="new_file">NEW FILE</p>
 
 {% if not commit %}
 	<form action="{% url commitlog-upload-file  repo_name branch_name %}" method="post" >
@@ -53,5 +55,4 @@
 		<button>UPLOAD</button>
 	</form>
 {% endif %}
-
 </div>

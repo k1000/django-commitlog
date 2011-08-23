@@ -5,6 +5,8 @@ REPOS = getattr(settings, "REPOS", {
 	"local": settings.PROJECT_PATH,
 	"commitlog": "/home/kam/Projects/flatmate/env/src/commitlog/.git",
 	"tasty-pie": "/home/kam/Projects/flatmate/django-tastypie/.git",
+
+	#"commitlog": "/home/kam/Projects/flatmate/env/src/commitlog/.git",
 })
 
 REPO_BRANCH = getattr(settings, "REPO_BRANCH", "master")
