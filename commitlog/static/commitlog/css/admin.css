@@ -138,12 +138,13 @@ ul {
 
 /* ---------- LAYOUT -------------- */
 #content {
+	padding-top: 80px;
 	margin: 0;
 	background-color: #dde9f2;
 }
 #pages {
 	background: white;
-	box-shadow: 0px 0px 6px #dedede;
+	box-shadow: 0px 0px 6px #c2cdd7;
 	padding:  20px ;
 }
 .page{
@@ -160,12 +161,9 @@ ul {
 	float: left;
 	width: auto;
 }
-#console {
-	clear: both;
-}
 
 
-/* ---------- LAYOUT -------------- */
+/* ---------- HEAD -------------- */
 .breadcrumbs ul{
 	overflow: hidden;
 	padding: 0;
@@ -176,7 +174,7 @@ ul {
 	float: left;
 	list-style: none;
 	list-style-type: none;
-	margin-right: 1em;
+	margin-right: .5em;
 }
 .colM{
 	clear: both;
@@ -257,10 +255,16 @@ li.tree{
 	display: none;
 }
 p.new_file{
-	padding: 1em;
+	padding: 1.4em;
 	margin: 0;
 	background: #fffeff;
-	border-bottom:  1ps solid gray;
+	border-bottom: 1px solid #dcdcdc;
+}
+
+#tree ul.breadcrumbs {
+	overflow: hidden;
+	padding-left: 10px;
+	margin-top: 16px;
 }
 /* ---------- EDIT -------------- */
 .edit_file button {
@@ -311,20 +315,20 @@ ul.tabs li {
   margin-bottom: -1px;
   overflow: hidden;
   position: relative;
-  background: #ebf0f4;
-  box-shadow: 0px -3px 6px #dedede;
+  background: #eff6fa;
+  box-shadow: 0px -3px 6px #b3bfc8;
 }
 ul.tabs li a {
 	border: 1px none #abaeae;
   text-decoration: none;
-  color: #000;
+  color: #868686;
   display: block;
   font-size: 1.2em;
   padding: 0 20px;
   outline: none;
 }
 ul.tabs li a:hover {
-  background: #ccc;
+  background: #cad6e0;
 }
 ul.tabs li:hover a{
   display: block;
@@ -333,6 +337,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
   background: #fff;
   border-bottom: 1px solid #fff;
   width: auto;
+  z-index: 10;
 }
 .tabs a.close{
   display: none;
@@ -346,5 +351,32 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
 .tabs a.close:hover{
 	color: red;
 	background: transparent;
+}
+
+/* ---------- CONSOLE -------------- */
+#console {
+	position: absolute;
+	z-index: 999;
+}
+#console h4{
+	width: 60px;
+	height: 40px;
+	text-align: center;
+	margin: 0;
+	float: right;
+}
+#console .content{
+	padding: 20px;
+	background: white;
+	width: 500px;
+	display: none;
+	box-shadow: 0px 0px 6px #c2cdd7;
+}
+#console_output{
+	clear: both;
+	height: 200px;
+	background: #1a4465;
+	border: 1px solid black;
+	overflow: auto;
 }
 

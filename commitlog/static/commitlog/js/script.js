@@ -64,6 +64,14 @@ $(document).ready( function(){
 		return false;
 	});
 
+	// ----------------- CONSOLE --------------------
+	$("#console h4").click( function(){
+		$("#console .content").toggle()
+	})
+	$("#console").draggable(function() {
+	  helper: "original" 
+	});
+
 })
 
 function get_page(url, rel){
