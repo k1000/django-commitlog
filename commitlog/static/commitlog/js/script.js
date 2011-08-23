@@ -15,7 +15,6 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	pages.new_page( document.location.href, pagae1 );
-	console.log(pages)
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( document.location.href , $(".page h2").html() );
@@ -75,7 +74,7 @@ $(document).ready( function(){
 
 })
 
-function prev_next( obj, current ) {
+function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
 	var prev_next = {"prev":null, "next":null};
 	var var_prev = null;
@@ -92,6 +91,7 @@ function prev_next( obj, current ) {
 		}
 
 	}
+	return prev_next
 }
 
 function get_page(url, rel){
@@ -109,7 +109,7 @@ function TabManager( tab_container, pages ){
 	var self = this;
 
 	tab_container.delegate("li", 'click', function(event){
-		event.preventDefault();
+		//event.preventDefault();
 		self.deactivate_tabs();
 		var tab = $(this);
 		tab.addClass("active");
@@ -118,22 +118,28 @@ function TabManager( tab_container, pages ){
 		return false;
 	});
 
+	tab_container.delegate("a.close", 'click', function(event){
+		//event.preventDefault();
+		self.rm_tab($(this).next().attr("href"));
+		return false;
+	});
+
 	this.get_tabs = function() {
 		
 	}
 	this.mk_tab = function( url, title ){
 		this.deactivate_tabs();
-		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close tab' >x</a><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a></li>")
+		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close' >x</a><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a></li>")
 	}
 	this.rm_tab = function( url ){
 		var tab_to_remove = this.get_tab_by_url( url ).parent()
 		tab_to_remove.remove();
-		prev_next = prev_next( this.pages.pages, url )
-		
-		if (prev_next.prev) {
-			this.pages.show_page(prev_next.prev);
+		var prev_next = get_prev_next( this.pages.pages, url );
+		var new_active_tab = (prev_next.prev)? prev_next.prev: prev_next.next;
+		if (new_active_tab){
+			this.activate_tab( new_active_tab );
+			this.pages.show_page( new_active_tab );
 		}
-		
 	}
 	this.deactivate_tabs = function( ){
 		this.tab_container.find("li").removeClass("active");
