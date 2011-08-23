@@ -1,4 +1,5 @@
 import codecs
+from django.http import HttpResponse
 
 from commitlog.settings import REPOS, REPO_BRANCH, GITTER_MEDIA_URL
 from commitlog.forms import SearchForm
@@ -100,15 +101,19 @@ def consol(request, repo_name):
     """
     serch files for string
     """
-    result = ""
-    query = ""
+    result = query = ""
     repo = get_repo( repo_name )
+
     if request.method == 'POST':
-        query = request.POST.get("console-input", "")
+        query = request.POST.get("com", "")
         if query:
             git = repo.git
             #http://book.git-scm.com/4_finding_with_git_grep.html
-            result = git.grep( "--name-only", query )
-            
-        
+            com_str = query.split(" ")
+            if com_str[0] != "git":
+                result = "first command must be git"
+            else:
+                command = getattr(git, com_str[1])
+                result = command( com_str[2:] )
+                
     return HttpResponse(result, mimetype='application/javascript')

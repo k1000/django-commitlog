@@ -29,6 +29,11 @@ urlpatterns += patterns('commitlog.views.tree',
         "view", name='commitlog-commit-tree-view'),
 )
 
+urlpatterns += patterns('commitlog.views.meta', 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/consol/$', 
+        "consol", name='commitlog-consol'),
+)
+
 urlpatterns += patterns('commitlog.views.commit',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/view/(?P<commit_sha>[a-zA-Z0-9\-_\.\/]*)$', 
         "view", name='commitlog-commit-view'),
@@ -51,10 +56,7 @@ urlpatterns += patterns('commitlog.views.meta',
         "search", name='commitlog-search'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/$', 
-    	"branches", name='commitlog-branches'),
-    
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/consol/$', 
-        "consol", name='commitlog-consol'),
+        "branches", name='commitlog-branches'),
 
     url(r'^$', 
     	"repos", name='commitlog-repos'),

@@ -62,10 +62,7 @@ $(document).ready( function(){
 			var current = $(this).parents(".page");
 			get_page(this.href, current);
 		} else {
-			alert( this.rel );
-			var rel = $(this.rel);
-			alert( rel );
-			get_page(this.href, rel);
+			get_page(this.href, $(this.rel));
 		}
 		return false;
 	});
@@ -77,6 +74,11 @@ $(document).ready( function(){
 	$("#console").draggable(function() {
 	  helper: "original" 
 	});
+
+	$("#console_enter").click( function(){
+		
+		return false
+	})
 
 })
 

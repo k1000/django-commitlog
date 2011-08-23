@@ -374,6 +374,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
 }
 #console_output{
 	clear: both;
+  color: white;
 	height: 200px;
 	background: #1a4465;
 	border: 1px solid black;
