@@ -10,7 +10,7 @@ $(document).ready( function(){
 		}
 	}
 	// initialize pages
-	var pages = new PageManager($("#main"));
+	var pages = new PageManager($("#pages"));
 	var tabs = new TabManager($("ul.tabs"), pages);
 	var pagae1 = $(".page").html();
 	$(".page").remove();
@@ -39,7 +39,7 @@ $(document).ready( function(){
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
 		var self = this;
-		if (this.rel == "#main") {
+		if (this.rel == "#pages") {
 			// if its the same page do nothing
 			if ( this.href != pages.current) {
 				// hide current page
@@ -52,7 +52,6 @@ $(document).ready( function(){
 				} else { 
 					var self = this;
 					$.get(this.href, function(data) {
-						console.log( data.html  )
 						pages.new_page(self.href, data.html );
 					  	var tab_text = $(data.html).find("h1").text().replace('"', "");
 					  	tabs.mk_tab(self.href, tab_text);
@@ -91,7 +90,7 @@ function TabManager( tab_container, pages ){
 
 	this.mk_tab = function( url, title ){
 		this.deactivate_tabs();
-		return this.tab_container.append("<li class='active' ><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a><a href='#' class='close' >close</a></li>")
+		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close tab' >x</a><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a></li>")
 	}
 	this.rm_tab = function( url ){
 		this.get_tab_by_url( url ).parent().remove();

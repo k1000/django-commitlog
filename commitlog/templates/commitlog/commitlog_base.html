@@ -7,10 +7,10 @@
 		<li>project "<a href="{% url commitlog-repos %}" >{{ repo_name }}</a>" </li>
 		{% endif %}
 		{% if branch_name %}
-		<li>branch "<a class="ajax" rel="main" href="{% url commitlog-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
+		<li>branch "<a class="ajax" rel="#pages" href="{% url commitlog-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li><a class="ajax" rel="main" href="{% url commitlog-branch repo_name branch_name %}"  >commits</a> </li>
+		<li><a class="ajax" rel="#pages" href="{% url commitlog-branch repo_name branch_name %}"  >commits</a> </li>
 		{% endif %}
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
@@ -53,8 +53,10 @@
 -->
 	
 	<div id="main">
-	<ul class="tabs"></ul>
+		<ul class="tabs"></ul>
+		<div id="pages">
 {% block git_content %}{% endblock git_content %}
+		</div>
 	</div>
 
 	<div id="toolbox">

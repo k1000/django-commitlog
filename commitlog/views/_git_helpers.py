@@ -1,5 +1,6 @@
 from git import *
-
+from django.http import Http404
+from commitlog.views._view_helpers import error_view
 from commitlog.settings import REPOS, REPO_ITEMS_IN_PAGE
 
 def mk_commit(repo, message, path ):
@@ -22,7 +23,9 @@ def get_repo( repo_name ):
     try:
         return Repo(REPOS[repo_name])
     except InvalidGitRepositoryError:
-        raise Http404
+        raise Http404 
+    except NoSuchPathError:
+        raise Http404 #!!! FIXIT
 
 def get_commit_tree( repo, commit_sha=None ):
     commit = None

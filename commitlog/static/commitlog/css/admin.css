@@ -1,4 +1,7 @@
-/* @override http://127.0.0.1:8000/media/commitlog/admin.css */
+/* @override 
+	http://127.0.0.1:8000/media/commitlog/admin.css
+	http://127.0.0.1:8000/media/commitlog/css/admin.css
+*/
 
 /* #Buttons
 ================================================== */
@@ -76,11 +79,7 @@
         padding-right: 0 !important;
         text-align: center; }
     
-    
-.gitter {
-	width: 900px;
-	margin: 0 auto;
-}
+
 .gitter ul{
 	margin: 0;
 	padding: 0;
@@ -117,8 +116,8 @@ img.gravatar {
 .commit{
     overflow: hidden;
     clear: both;
-    border-top: 1px solid #dcded7;
-    background: #f8fafa;
+    border-top: 1px solid #e9eeec;
+
     padding: 5px;
 }
 .commit ul{
@@ -138,14 +137,29 @@ ul {
 }
 
 /* ---------- LAYOUT -------------- */
+#content {
+	margin: 0;
+	background-color: #dde9f2;
+}
+#pages {
+	background: white;
+	box-shadow: 0px 0px 6px #dedede;
+	padding:  20px ;
+}
+.page{
+	
+	overflow: hidden;
+}
 #tree {
 	float: left;
+	box-shadow: 0px -2px 3px #dedede;
 	width: 200px;
+	background: #f9f9f9;
 }
 #main {
 	float: left;
+	width: auto;
 }
-
 #console {
 	clear: both;
 }
@@ -197,34 +211,57 @@ ul {
 .list {
 	padding: 0;
 	margin: 0;
-	border: 1px solid #d2e6f7;
 }
 .list li {
 	margin: 0;
-	background: #faf9fb;
+
 	list-style: none;
 	list-style-type: none;
 	padding: .7em 2em .7em 3em;
-	border-bottom: 1px solid #efecf6;
+	border-bottom: 1px solid #eee9ee;
 	font-family: Monaco,"Courier New","DejaVu Sans Mono", mono;
 	font-size: 90%;
 }
-
+.list li:hover {
+	background-color: white;
+}
+.list li:hover .delete{
+	display: block;
+}
+.next {
+	float: right;
+}
 /* ---------- TREE -------------- */
 .delete,
 .rename {
 	float: right;
 }
+a.delete{
+	position: absolute;
+	margin-top: -15px;
+	left: 182px;
+	display: none;
+	width: 14px;
+	color: #cdcccd;
+}
+a.delete:hover{
+	color: red;
+}
 li.blob{
-	background: #f8f8f8 url(/media/commitlog/images/file.png) no-repeat 10px;
+	background: url(/media/commitlog/images/file.png) no-repeat 10px;
 }
 li.tree{
-	background: #f8f8f8 url(/media/commitlog/images/directory.png) no-repeat 10px;
+	background: url(/media/commitlog/images/directory.png) no-repeat 10px;
 }
 #tree .rename {
 	display: none;
 }
-
+p.new_file{
+	padding: 1em;
+	margin: 0;
+	background: #fffeff;
+	border-bottom:  1ps solid gray;
+}
 /* ---------- EDIT -------------- */
 .edit_file button {
 	float: right;
@@ -256,9 +293,12 @@ ul.tabs {
   float: left;
   list-style: none;
   height: 32px;
-  border-bottom: 1px solid #999;
-  border-left: 1px solid #999;
+  /* border-bottom: 1px solid #d8dada;
+  border-left: 1px solid #d1d3d3; */
   width: 100%;
+  background: none;
+  margin-top: -32px;
+  margin-left: 20px;
 }
 ul.tabs li {
   float: left;
@@ -267,33 +307,44 @@ ul.tabs li {
   height: 31px;
   width: 80px;
   line-height: 31px;
-  border: 1px solid #999;
-  border-left: none;
+  
   margin-bottom: -1px;
   overflow: hidden;
   position: relative;
-  background: #e0e0e0;
+  background: #ebf0f4;
+  box-shadow: 0px -3px 6px #dedede;
 }
 ul.tabs li a {
+	border: 1px none #abaeae;
   text-decoration: none;
   color: #000;
   display: block;
   font-size: 1.2em;
   padding: 0 20px;
-  border: 1px solid #fff;
   outline: none;
 }
 ul.tabs li a:hover {
   background: #ccc;
+}
+ul.tabs li:hover a{
+  display: block;
 }
 html ul.tabs li.active, html ul.tabs li.active a:hover  {
   background: #fff;
   border-bottom: 1px solid #fff;
   width: auto;
 }
-.tabs li a.close{
-  float: right;
+.tabs a.close{
+  display: none;
   width: 10px;
   height: 10px;
-  background: red;
+  float: right;
+  padding: 0;
+  margin-right: 5px;
+  color: #cacbcb;
 }
+.tabs a.close:hover{
+	color: red;
+	background: transparent;
+}
+
