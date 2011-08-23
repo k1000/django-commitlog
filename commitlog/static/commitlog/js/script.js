@@ -58,8 +58,14 @@ $(document).ready( function(){
 					}, "json")
 				}				
 			}
-		}else {
-			get_page(this.href, this.rel)
+		} else if (this.rel == "current") {
+			var current = $(this).parents(".page");
+			get_page(this.href, current);
+		} else {
+			alert( this.rel );
+			var rel = $(this.rel);
+			alert( rel );
+			get_page(this.href, rel);
 		}
 		return false;
 	});
@@ -89,7 +95,6 @@ function get_prev_next( obj, current ) {
 			}
 			var_prev = key;
 		}
-
 	}
 	return prev_next
 }
@@ -98,7 +103,7 @@ function get_page(url, rel){
 	var rel = rel;
 	var url = url; 
 	$.get(url, function(data) {
-		$(rel).html( data.html  )
+		rel.html( data.html  )
 	}, "json")
 }
 

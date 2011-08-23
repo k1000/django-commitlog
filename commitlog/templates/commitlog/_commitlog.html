@@ -13,9 +13,9 @@
 {% if commits %}
 <p class="pager">
     {% if previous_page > -1 %}
-        <a href="?page={{ previous_page }}" class="previous button">PREVIOUS</a>
+        <a href="?page={{ previous_page }}" class="previous button ajax" rel="current" >PREVIOUS</a>
     {% endif %}
-    <a href="?page={{ next_page }}" class="next button">NEXT</a>
+    <a href="?page={{ next_page }}" class="next button ajax" rel="current" >NEXT</a>
 </p>
 {% else %}
 <h2>No more commits.</h2>
@@ -34,9 +34,9 @@
 {% if commits %}
 <p class="pager">
     {% if previous_page > -1 %}
-        <a href="?page={{ previous_page }}" class="previous button">PREVIOUS</a>
+        <a href="?page={{ previous_page }}" class="previous button ajax" rel="current">PREVIOUS</a>
     {% endif %}
-    <a href="?page={{ next_page }}" class="next button">NEXT</a>
+    <a href="?page={{ next_page }}" class="next button ajax" rel="current">NEXT</a>
 </p>
 {% endif %}
 

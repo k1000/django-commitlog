@@ -114,7 +114,7 @@ $(document).ready( function(){
 	// ----------------- TREE INIT --------------------
 	var tree_path =  {% if path %} '{% url commitlog-tree-view repo_name branch_name path %}';
 	{% else %} '{% url commitlog-tree-view repo_name branch_name "" %}'; {% endif %}
-	get_page(tree_path, "#tree")
+	get_page(tree_path, $("#tree"));
 
 	//$("#tree").load(tree_path);
 })
