@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 
 from _view_helpers import mix_response
 from _git_helpers import get_repo, get_commits, get_commit, get_diff
@@ -22,6 +23,7 @@ def log(request, repo_name, branch=REPO_BRANCH, path=None):
         commits = commits,
         next_page = page + 1,
         path = path,
+        url= reverse('commitlog-log', args=[repo_name, branch ])
     )
     if page > 0:
         context["previous_page"] = page-1
