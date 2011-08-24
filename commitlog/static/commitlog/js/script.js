@@ -48,19 +48,24 @@ $(document).ready( function(){
 				if ( pages.pages[this.href] ){
 					tabs.activate_tab(this.href);
 					pages.show_page(this.href);
-				//creat new page
+				//open new page
 				} else {
 					pages.open_page( this.href,
 						function(url, data) {
+
 							var tab_text = $(data.html).find("h1").text().replace('"', "");
+							console.log( tab_text )
+
 					  		tabs.mk_tab(self.href, tab_text);
 						}
 					)
 				}				
 			}
-		} else if (this.rel === "current") {
+		//load in current page
+		} else if (this.rel == "current") {
 			var current = $(this).parents(".page");
 			get_page(this.href, current);
+		//load in arbitrary container
 		} else {
 			get_page(this.href, $(this.rel));
 		}
@@ -178,7 +183,7 @@ function PageManager( page_container, options ){
 		this.set_current( url );
         //url = url.replace(/^.*#/, '');
         //$.history.load(url);
-		return this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
+		this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
 	}
 	this.rm_page = function( url ){
 		$("#"+this.get_page_id(url)).remove();
@@ -202,21 +207,23 @@ function PageManager( page_container, options ){
 	this.get_current = function( ){
 		return $("#"+this.pages[ this.current ])
 	}
-	this.open_page = function( url, callback ){
+	this.open_page = function( url, call_back ){
 		var self = this;
 		var url = url;
+		var call_back = call_back;
 		$.get(url, function(data) {
-			pages.new_page(url, data.html );
-			if (callback) {
-				callback( url, data)
+			if (call_back ) {
+				call_back( url, data)
 			}
+			self.new_page(url, data.html );
+			
+			
 		}, "json")
 	}
 	this.hide_current = function( ){
 		var page = this.get_current( );
 		this.transition = true;
 		var self = this;
-		var url = url;
 		return page.hide('slide', {direction: 'left'}, 700, function(){
 			self.transition = false;
 		});

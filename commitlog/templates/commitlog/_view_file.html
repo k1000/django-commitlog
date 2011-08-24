@@ -1,10 +1,10 @@
 {% load commit_tags %}
 <div id="view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }}">
 <a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
-<h2>
-	File "{{ path }}" 
+<h1>
+	File {{ path }}
 	{% if commit %} at {{ commit.hexsha|truncatechars:16 }} commit {% endif %}
-</h2>
+</h1>
 
 {% if commit %}
 {% include "commitlog/_commit.html" %}
