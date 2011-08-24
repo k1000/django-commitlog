@@ -5,12 +5,15 @@
 	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}commitlog/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
 {% endif %}
 
-<script type="text/javascript"> 
-var editor = CodeMirror.fromTextArea(document.getElementById($("#view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }} #id_file_source")[0]), {
+<script > 
+var ref_id  = "#view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }} #id_file_source";
+
+var editor = CodeMirror.fromTextArea($( ref_id )[0], {
   mode: {name: "{{ file_meta.type }}"},
   lineNumbers: true,
   indentUnit: 4,
   readOnly: true
 });
+
 </script> 
 

@@ -51,11 +51,9 @@ $(document).ready( function(){
 				//open new page
 				} else {
 					pages.open_page( this.href,
+						// create tab
 						function(url, data) {
-
 							var tab_text = $(data.html).find("h1").text().replace('"', "");
-							console.log( tab_text )
-
 					  		tabs.mk_tab(self.href, tab_text);
 						}
 					)
