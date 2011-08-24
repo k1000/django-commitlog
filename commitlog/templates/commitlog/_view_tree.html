@@ -1,58 +1,40 @@
 {% load commit_tags %}
 <div class="tree" id="tree_{{repo_name}}_{{branch_name}}" >
-{% if commit %}
-	<h2>File tree at "{{ commit.hexsha|truncatechars:16 }}" commit</h2>
-	{% include "commitlog/_commit.html" %}
-{% else %}
+
 	<ul class="breadcrumbs">
-	<li><a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >//</a> </li>
-	{% for crumb in breadcrumbs %}
-	{% if commit %}
-	<li><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>	
-	{% else %}
-	<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>
-	{% endif %}
-	{% endfor %}
-	<li>{{ dir_path|last }}/</li>
+		<li><a href="{% url commitlog-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >//</a> </li>
+		{% for crumb in breadcrumbs %}
+		<li><a href="{% url commitlog-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}/</a> </li>
+		{% endfor %}
+		<li>{{ dir_path|last }}/</li>
 	</ul>
-{% endif %}
 
-<ul class="list">
-{% if dir_path.0 %}
-	<li><a href="./" class="ajax" rel="#pages" >..</a>
-{% endif %}
 
-{% for element in tree %}
-
-	<li class="{{ element.type }}">
-		{% if element.type == "tree" %}
-			{% if commit %}
-			<a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/" >{{ element.name }}/</a>
-			{% else %}
-			<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/">{{ element.name }}/</a>
-			{% endif %}
-		{% else %}
-			{% if commit %}
-			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
-			{% else %}
-			<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
-			{% endif %}
-			<small>{{ element.size|filesizeformat }}</small>
-
+	<ul class="list">
+		{% if dir_path.0 %}
+		<li><a href="./" class="ajax" rel="#pages" >..</a>
 		{% endif %}
-		{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
-		<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" title="delete">x</a>
-		<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="#toolbox" >rename</a>
-	</li>
-{% endfor %}
-</ul>
 
-<p class="new_file">NEW FILE</p>
+		{% for element in tree %}
+		<li class="{{ element.type }}">
+			{% if element.type == "tree" %}
+				<a href="{% url commitlog-tree-view repo_name branch_name element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/">{{ element.name }}/</a>
+			{% else %}
+				<a href="{% url commitlog-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
+				<small>{{ element.size|filesizeformat }}</small>
 
-{% if not commit %}
+			{% endif %}
+			{# <small>commit: <a href="{% url commitlog-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
+			<a href="{% url commitlog-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" title="delete">x</a>
+			<a href="{% url commitlog-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="#toolbox" >rename</a>
+		</li>
+		{% endfor %}
+	</ul>
+
+	<p class="new_file">NEW FILE</p>
+
 	<form action="{% url commitlog-upload-file  repo_name branch_name %}" method="post" >
 		{{ upload_form.as_p }}
 		<button>UPLOAD</button>
 	</form>
-{% endif %}
 </div>

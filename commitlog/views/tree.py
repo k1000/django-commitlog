@@ -14,6 +14,11 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
     commit, tree = get_commit_tree(repo, commit_sha)
     dir_path = path.split("/")
 
+    if commit_sha:
+        template_name = 'commitlog/view_commit_tree.html'
+    else:
+        template_name = 'commitlog/view_tree.html'
+
     if path:
         if path[-1:] == "/":
             path = path[:-1]
@@ -47,5 +52,5 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
 
     return mix_response( 
         request, 
-        'commitlog/view_tree.html', 
+        template_name, 
         context)
