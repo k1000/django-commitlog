@@ -1,43 +1,41 @@
 {% load commit_tags %}
-
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
 <h2>
-    <a href="{% url commitlog-log repo_name branch_name %}">
-        Commits at "{{ branch_name }}" branch 
-    </a>
+    Commits 
     {% if path %}
         for "{{ path }}"
     {% endif %}
+    at {{ branch_name }} branch 
 </h2>
+
 {% if commits %}
-<p class="pager">
-    {% if previous_page > -1 %}
-        <a href="?page={{ previous_page }}" class="previous button ajax" rel="current" >PREVIOUS</a>
-    {% endif %}
-    <a href="?page={{ next_page }}" class="next button ajax" rel="current" >NEXT</a>
-</p>
+    <p class="pager">
+        {% if previous_page > -1 %}
+            <a href="{% url commitlog-log repo_name branch_name %}?page={{ previous_page }}" class="previous button ajax" rel="current" >PREVIOUS</a>
+        {% endif %}
+        <a href="{% url commitlog-log repo_name branch_name %}?page={{ next_page }}" class="next button ajax" rel="current" >NEXT</a>
+    </p>
 {% else %}
-<h2>No more commits.</h2>
+    <h2>No commits yet.</h2>
 {% endif %}
 
 <div class="commits">
-{% for commits in commits_per_day %}
-    <h3>{{ commits.grouper }}</h3>
-    {% for commit in commits.list %}
-    
-    {% include "commitlog/_commit.html" %}
 
+    {% for commits in commits_per_day %}
+        <h3>{{ commits.grouper }}</h3>
+        {% for commit in commits.list %}
+            {% include "commitlog/_commit.html" %}
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-{% if commits %}
-<p class="pager">
-    {% if previous_page > -1 %}
-        <a href="?page={{ previous_page }}" class="previous button ajax" rel="current">PREVIOUS</a>
+    {% if commits %}
+    <p class="pager">
+        {% if previous_page > -1 %}
+            <a href="?page={{ previous_page }}" class="previous button ajax" rel="current">PREVIOUS</a>
+        {% endif %}
+        <a href="?page={{ next_page }}" class="next button ajax" rel="current">NEXT</a>
+    </p>
     {% endif %}
-    <a href="?page={{ next_page }}" class="next button ajax" rel="current">NEXT</a>
-</p>
-{% endif %}
-
+    
 </div>

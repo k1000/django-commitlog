@@ -18,24 +18,5 @@
             <dd>parent:</dd><dt><a class="ajax" rel="#pages" href="{% url commitlog-commit-view repo_name branch_name parent.hexsha %}">{{ parent.hexsha|truncatechars:16 }}</a></dt>
             {% endfor %}
         </dl>
-    	<ul>
-    		{% for file, values in commit.stats.files.items %}
-    		<li>
-    			<a class="ajax" rel="#pages" href="{% url commitlog-view-file repo_name branch_name commit.hexsha file %}" >
-                    {% if file == path %}
-                    <strong>{{ file }}</strong>
-                    {% else %}
-                    {{ file }}
-                    {% endif %}
-                </a>
-                {% if values.insertions %}
-                    <em>+{{values.insertions}}</em>
-                {% endif %}
-                 
-                {% if values.deletions %}
-                    <em>-{{values.deletions}}</em>
-                {% endif %}
-    		</li>
-    		{% endfor %}
-    	</ul>
+    	
     </div>
