@@ -10,7 +10,7 @@
 	</ul>
 
 	<a class="history ajax" rel="#main" href="{% url commitlog-history-file repo_name branch_name path %}" >history</a>
-	<h1>"{{path}}"</h1>
+	<h1>{{path}}</h1>
 
 	{% if result_msg %}
 		<h3>{{ result_msg|safe }}</h3>

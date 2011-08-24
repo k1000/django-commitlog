@@ -10,18 +10,18 @@
         </div>
         <div class="message"> {{ commit.message }} </div>
         <dl class="robot">
-            <dd>commit:</dd><dt><a href="{% url commitlog-commit-view repo_name branch_name commit.hexsha %}">{{ commit.hexsha|truncatechars:16 }}</a> </dt>
+            <dd>commit:</dd><dt><a class="ajax" rel="#pages" href="{% url commitlog-commit-view repo_name branch_name commit.hexsha %}">{{ commit.hexsha|truncatechars:16 }}</a> </dt>
             
-            <dd>tree:</dd><dt><a href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.tree.hexsha|truncatechars:16 }}</a></dt>
+            <dd>tree:</dd><dt><a class="ajax" rel="#pages" href="{% url commitlog-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.tree.hexsha|truncatechars:16 }}</a></dt>
 
             {% for parent in commit.parents %}
-            <dd>parent:</dd><dt><a href="{% url commitlog-commit-view repo_name branch_name parent.hexsha %}">{{ parent.hexsha|truncatechars:16 }}</a></dt>
+            <dd>parent:</dd><dt><a class="ajax" rel="#pages" href="{% url commitlog-commit-view repo_name branch_name parent.hexsha %}">{{ parent.hexsha|truncatechars:16 }}</a></dt>
             {% endfor %}
         </dl>
     	<ul>
     		{% for file, values in commit.stats.files.items %}
     		<li>
-    			<a href="{% url commitlog-view-file repo_name branch_name commit.hexsha file %}" >
+    			<a class="ajax" rel="#pages" href="{% url commitlog-view-file repo_name branch_name commit.hexsha file %}" >
                     {% if file == path %}
                     <strong>{{ file }}</strong>
                     {% else %}
