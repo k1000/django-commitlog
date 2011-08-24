@@ -17,7 +17,7 @@ $(document).ready( function(){
 	pages.new_page( document.location.href, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( document.location.href , $(".page h2").html() );
+	tabs.mk_tab( document.location.href , $(".page h1").html() );
 	//$.history.init(loadContent);
 	// initialize tabs
 
@@ -38,7 +38,6 @@ $(document).ready( function(){
 	// ----------------- PAGES --------------------
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
-		var self = this;
 		if (this.rel == "#pages") {
 			// if its the same page do nothing
 			if ( this.href != pages.current) {
@@ -54,7 +53,7 @@ $(document).ready( function(){
 						// create tab
 						function(url, data) {
 							var tab_text = $(data.html).find("h1").text().replace('"', "");
-					  		tabs.mk_tab(self.href, tab_text);
+					  		tabs.mk_tab(url, tab_text);
 						}
 					)
 				}				
@@ -84,6 +83,17 @@ $(document).ready( function(){
 		return false
 	})
 
+	// ----------------- FORMS --------------------
+	$('form').delegate('button', 'click', function(event) {
+		event.preventDefault();
+		var self = $(this);
+		var form = self.parents("form");
+		var url = form.attr("action");
+		var send_data = form.serialize();
+		$.post(url, send_data, function(data) {
+			alert( data )
+		}, "json")
+	})
 })
 
 function get_prev_next( obj, current ) {
@@ -214,8 +224,6 @@ function PageManager( page_container, options ){
 				call_back( url, data)
 			}
 			self.new_page(url, data.html );
-			
-			
 		}, "json")
 	}
 	this.hide_current = function( ){

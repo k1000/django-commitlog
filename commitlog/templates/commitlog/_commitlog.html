@@ -1,13 +1,13 @@
 {% load commit_tags %}
 {% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
 
-<h2>
+<h1>
     Commits 
     {% if path %}
         for "{{ path }}"
     {% endif %}
     at {{ branch_name }} branch 
-</h2>
+</h1>
 
 {% if commits %}
     <p class="pager">
