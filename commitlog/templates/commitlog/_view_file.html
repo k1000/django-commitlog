@@ -1,3 +1,25 @@
+{% load commit_tags %}
+<div id="view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }}">
+<a class="history" href="{% url commitlog-history-file repo_name branch_name path %}">history</a>
+<h2>
+	File "{{ path }}" 
+	{% if commit %} at {{ commit.hexsha|truncatechars:16 }} commit {% endif %}
+</h2>
 
-{{ form.as_p }}
+{% if commit %}
+{% include "commitlog/_commit.html" %}
+{% endif %}
 
+{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
+  {% include "commitlog/_view_text.html" %}
+{% else %}
+  {{ form.as_p }}
+{% endif %}
+
+{% if file_meta.mime_type == "image" %}
+	<img src="data:{{ file_meta.mime }};base64,{{ img_base }}" width="300" />
+{% endif %}
+</div>
+{% if diff %}
+	{% include "commitlog/_diff.html" %}
+{% endif %}

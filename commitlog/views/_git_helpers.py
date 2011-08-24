@@ -20,12 +20,13 @@ def get_commit( repo, commit_sha ):
     return list(repo.iter_commits( rev = commit_sha ))
 
 def get_repo( repo_name ):
-    try:
-        return Repo(REPOS[repo_name])
-    except InvalidGitRepositoryError:
-        raise Http404 
-    except NoSuchPathError:
-        raise Http404 #!!! FIXIT
+    return Repo(REPOS[repo_name])
+    #try:
+        
+    #except InvalidGitRepositoryError:
+    #    raise Http404 
+    #except NoSuchPathError:
+    #    raise Http404 #!!! FIXIT
 
 def get_commit_tree( repo, commit_sha=None ):
     commit = None

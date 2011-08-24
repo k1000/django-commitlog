@@ -49,16 +49,16 @@ $(document).ready( function(){
 					tabs.activate_tab(this.href);
 					pages.show_page(this.href);
 				//creat new page
-				} else { 
-					var self = this;
-					$.get(this.href, function(data) {
-						pages.new_page(self.href, data.html );
-					  	var tab_text = $(data.html).find("h1").text().replace('"', "");
-					  	tabs.mk_tab(self.href, tab_text);
-					}, "json")
+				} else {
+					pages.open_page( this.href,
+						function(url, data) {
+							var tab_text = $(data.html).find("h1").text().replace('"', "");
+					  		tabs.mk_tab(self.href, tab_text);
+						}
+					)
 				}				
 			}
-		} else if (this.rel == "current") {
+		} else if (this.rel === "current") {
 			var current = $(this).parents(".page");
 			get_page(this.href, current);
 		} else {
@@ -71,8 +71,9 @@ $(document).ready( function(){
 	$("#console h4").click( function(){
 		$("#console .content").toggle()
 	})
+
 	$("#console").draggable(function() {
-	  helper: "original" 
+		helper: "original" 
 	});
 
 	$("#console_enter").click( function(){
@@ -200,6 +201,16 @@ function PageManager( page_container, options ){
 	}
 	this.get_current = function( ){
 		return $("#"+this.pages[ this.current ])
+	}
+	this.open_page = function( url, callback ){
+		var self = this;
+		var url = url;
+		$.get(url, function(data) {
+			pages.new_page(url, data.html );
+			if (callback) {
+				callback( url, data)
+			}
+		}, "json")
 	}
 	this.hide_current = function( ){
 		var page = this.get_current( );

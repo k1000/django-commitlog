@@ -2,7 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from _view_helpers import mix_response, make_crumbs
+from _view_helpers import mix_response, make_crumbs, error_view
 from _git_helpers import get_repo, get_commit_tree, get_diff
 from _os_helpers import file_type_from_mime
 
